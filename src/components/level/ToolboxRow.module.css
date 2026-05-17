@@ -1,0 +1,120 @@
+.row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 0 0 12px;
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.letter {
+  font-family: var(--font-mono-stack);
+  font-size: 18px;
+  color: var(--color-text);
+  font-weight: 400;
+}
+
+.tile {
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: var(--tile-size);
+  background: var(--color-tile);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  transition: outline 0.15s ease, transform 0.12s ease;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-drag: element;
+}
+
+.tile:focus-visible,
+.tile:hover {
+  outline-color: var(--color-text);
+}
+
+.tile:active {
+  cursor: grabbing;
+  transform: translateY(-1px);
+}
+
+.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.disabled:hover {
+  outline-color: transparent;
+}
+
+.caption {
+  font-family: var(--font-mono-stack);
+  font-size: 11px;
+  color: var(--color-text);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Shape previews — flat monochrome miniatures of UML symbols */
+.preview {
+  display: inline-block;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-text);
+}
+
+.previewAction {
+  width: 60%;
+  height: 36%;
+  border-radius: 999px;
+}
+
+.previewDecision {
+  width: 44%;
+  height: 44%;
+  transform: rotate(45deg);
+}
+
+.previewAlert {
+  width: 60%;
+  height: 36%;
+  border-style: dashed;
+}
+
+.previewMerge {
+  width: 44%;
+  height: 44%;
+  transform: rotate(45deg);
+  border-style: dashed;
+}
+
+.previewStart {
+  width: 38%;
+  height: 38%;
+  border-radius: 999px;
+  background: var(--color-text);
+  border: 0;
+}
+
+.previewEnd {
+  width: 38%;
+  height: 38%;
+  border-radius: 999px;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-text);
+  position: relative;
+}
+
+.previewEnd::after {
+  content: "";
+  position: absolute;
+  inset: 22%;
+  border-radius: 999px;
+  background: var(--color-text);
+}

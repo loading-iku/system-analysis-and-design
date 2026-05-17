@@ -1,26 +1,86 @@
-@import "tailwindcss";
-
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-bg: #ffffff;
+  --color-text: #000000;
+  --color-muted: rgba(0, 0, 0, 0.5);
+  --color-panel: #f0f0f0;
+  --color-tile: #d9d9d9;
+  --color-wall: #d9d9d9;
+  --color-corridor: #ffffff;
+  --color-character: #ff0000;
+  --color-link: #1d4ed8;
+  --color-link-visited: #6d28d9;
+  --color-brand: #ff6fc8;
+  --color-success: #16a34a;
+  --color-hint: #b45309;
+
+  --font-mono-stack: var(--font-mono), "Roboto Mono", ui-monospace, "SF Mono",
+    Menlo, Consolas, monospace;
+
+  --line-height: 1.5;
+  --gutter-width: 4ch;
+  --gutter-gap: 2ch;
+  --cell-size: 36px;
+  --tile-size: 64px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-mono-stack);
+  font-size: 18px;
+  line-height: var(--line-height);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+  padding: 0;
+}
+
+input {
+  font-family: inherit;
+  font-size: inherit;
+  background: transparent;
+  border: none;
+  color: inherit;
+  outline: none;
+  padding: 0;
+}
+
+input:focus {
+  caret-color: var(--color-text);
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+::selection {
+  background: var(--color-text);
+  color: var(--color-bg);
 }

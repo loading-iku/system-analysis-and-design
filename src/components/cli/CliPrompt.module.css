@@ -1,0 +1,30 @@
+.row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6ch;
+  cursor: text;
+}
+
+.label {
+  white-space: nowrap;
+}
+
+.caret {
+  color: var(--color-text);
+  user-select: none;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  caret-color: var(--color-text);
+}
+
+.input::placeholder {
+  color: var(--color-muted);
+}

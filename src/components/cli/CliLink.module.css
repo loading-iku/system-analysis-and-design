@@ -1,0 +1,14 @@
+.link {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 500;
+}
+
+.link:hover {
+  text-decoration-thickness: 2px;
+}
+
+.link:visited {
+  color: var(--color-link);
+}

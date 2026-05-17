@@ -1,0 +1,37 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--font-mono-stack);
+  color: var(--color-text);
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gutter-gap);
+  min-height: 1.5em;
+}
+
+.gutter {
+  flex: 0 0 var(--gutter-width);
+  text-align: right;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+  letter-spacing: 0;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.bare .row {
+  padding-left: 0;
+}
+
+.blank {
+  display: inline-block;
+  width: 1px;
+}

@@ -1,0 +1,89 @@
+.node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  font-family: var(--font-mono-stack);
+  font-size: 14px;
+  color: var(--color-text);
+  text-align: center;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-text);
+  transition: opacity 0.4s ease;
+  max-width: 220px;
+  min-height: 36px;
+  line-height: 1.25;
+}
+
+.dimmed {
+  opacity: 0.4;
+}
+
+.label {
+  position: relative;
+}
+
+.guard {
+  position: absolute;
+  top: -12px;
+  right: -4px;
+  padding: 0 6px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.start,
+.end {
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  border-radius: 999px;
+}
+
+.start .label,
+.end .label {
+  display: none;
+}
+
+.end {
+  background: var(--color-text);
+}
+
+.action {
+  border-radius: 0;
+}
+
+.decision {
+  padding: 14px 18px;
+  /* diamond via transform */
+  transform: rotate(45deg);
+  width: 90px;
+  height: 90px;
+  border-radius: 0;
+}
+
+.decision .label {
+  transform: rotate(-45deg);
+  max-width: 72px;
+  font-size: 12px;
+}
+
+.alert {
+  border-style: dashed;
+}
+
+.merge {
+  transform: rotate(45deg);
+  width: 80px;
+  height: 80px;
+  border-style: dashed;
+}
+
+.merge .label {
+  transform: rotate(-45deg);
+}

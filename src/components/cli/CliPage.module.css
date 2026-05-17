@@ -1,0 +1,18 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: flex-start;
+  padding: 48px 64px;
+  background: var(--color-bg);
+}
+
+.main {
+  width: 100%;
+  max-width: 960px;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 24px 16px;
+  }
+}

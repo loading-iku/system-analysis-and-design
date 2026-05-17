@@ -1,0 +1,13 @@
+.hud {
+  background: var(--color-panel);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  font-family: var(--font-mono-stack);
+  font-size: 20px;
+  color: var(--color-text);
+  letter-spacing: 0;
+}

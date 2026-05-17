@@ -1,0 +1,95 @@
+{
+  "id": "place-order",
+  "title": "Place Order Flow",
+  "scenario": "A user clicks 'Place Order' on an e-commerce checkout. Build the activity diagram that captures the full flow — including what happens when the cart is empty.",
+  "objective": "Walk the labyrinth and place the correct UML node at each step.",
+  "toolbox": [
+    { "id": "A", "shape": "action", "label": "Action" },
+    { "id": "B", "shape": "decision", "label": "Decision" },
+    { "id": "C", "shape": "alert", "label": "Alert / End" }
+  ],
+  "labyrinth": { "width": 7, "height": 9, "start": [3, 0] },
+  "rootStepId": "s1",
+  "steps": [
+    {
+      "id": "s1",
+      "kind": "place",
+      "shape": "start",
+      "expectedToolboxId": "_auto_start",
+      "nodeLabel": "User clicks 'Place Order'",
+      "labyrinthMove": "down",
+      "hint": "Every flow needs an Initial Node.",
+      "nextStepId": "s2"
+    },
+    {
+      "id": "s2",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Retrieve Cart Items",
+      "labyrinthMove": "down",
+      "hint": "An Action represents a task the system performs.",
+      "nextStepId": "s3"
+    },
+    {
+      "id": "s3",
+      "kind": "decision",
+      "shape": "decision",
+      "nodeLabel": "Is Cart Empty?",
+      "labyrinthMove": "down",
+      "hint": "A Decision Node forks the flow based on a condition.",
+      "branches": [
+        { "guardLabel": "Yes", "labyrinthDir": "right", "nextStepId": "s4a" },
+        { "guardLabel": "No", "labyrinthDir": "left", "nextStepId": "s4b" }
+      ]
+    },
+    {
+      "id": "s4a",
+      "kind": "place",
+      "shape": "alert",
+      "expectedToolboxId": "C",
+      "nodeLabel": "Show 'Empty Cart' Alert",
+      "labyrinthMove": "right",
+      "hint": "An empty cart short-circuits to a terminal alert.",
+      "nextStepId": "s4aEnd"
+    },
+    {
+      "id": "s4aEnd",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "End",
+      "labyrinthMove": "down",
+      "hint": "Every alternate flow needs a Final Node."
+    },
+    {
+      "id": "s4b",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Validate Payment Details",
+      "labyrinthMove": "left",
+      "hint": "Validate payment is another Action.",
+      "nextStepId": "s5"
+    },
+    {
+      "id": "s5",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Send Order to Backend API",
+      "labyrinthMove": "down",
+      "hint": "Send order is the next Action.",
+      "nextStepId": "s6"
+    },
+    {
+      "id": "s6",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "Order Confirmed",
+      "labyrinthMove": "down",
+      "hint": "The successful flow terminates in a Final Node."
+    }
+  ]
+}

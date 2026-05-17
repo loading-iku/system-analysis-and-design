@@ -1,0 +1,8 @@
+.ascii {
+  margin: 0;
+  font-family: var(--font-mono-stack);
+  font-size: 18px;
+  line-height: var(--line-height);
+  white-space: pre;
+  color: var(--color-text);
+}

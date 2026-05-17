@@ -1,0 +1,65 @@
+.overlay {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  background: var(--color-bg);
+  border: 1.5px solid var(--color-text);
+  font-family: var(--font-mono-stack);
+  font-size: 14px;
+  max-width: min(560px, calc(100vw - 32px));
+  z-index: 100;
+  animation: slideUp 0.18s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translate(-50%, 8px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+.success {
+  border-color: var(--color-success);
+}
+
+.hint {
+  border-color: var(--color-hint);
+}
+
+.marker {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.success .marker {
+  color: var(--color-success);
+}
+
+.hint .marker {
+  color: var(--color-hint);
+}
+
+.text {
+  flex: 1;
+  color: var(--color-text);
+}
+
+.close {
+  color: var(--color-text);
+  padding: 0 4px;
+  font-family: var(--font-mono-stack);
+  font-size: 13px;
+}
+
+.close:hover {
+  color: var(--color-link);
+}
