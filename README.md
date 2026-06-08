@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Loading — Logic Path
+
+An educational game for learning system analysis and design concepts through a
+real-time CLI/TUI-style labyrinth. Built with Next.js 16, React 19, TypeScript,
+CSS Modules, and Clerk authentication.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+For local development you need Clerk **test** keys. Create a `.env.local` file:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
+CLERK_SECRET_KEY="sk_test_..."
+```
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Next.js dev server |
+| `npm run build` | Production `next build` |
+| `npm run lint` | ESLint |
+| `npm run verify:levels:v2` | Validate the JSON level files |
+| `npm run preview` | Build + run the Cloudflare Worker locally (workerd) |
+| `npm run deploy` | Build + deploy the Worker to Cloudflare |
+| `npm run cf-typegen` | Generate `cloudflare-env.d.ts` from `wrangler.jsonc` |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploying to Cloudflare Workers (OpenNext)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This app is deployed as a **Cloudflare Worker** using
+[`@opennextjs/cloudflare`](https://opennext.js.org/cloudflare). The relevant
+files:
 
-## Deploy on Vercel
+- `wrangler.jsonc` — Worker config. **Requires** the `nodejs_compat`
+  compatibility flag; OpenNext runs the Next.js server in the Workers Node.js
+  runtime, not the Edge runtime.
+- `open-next.config.ts` — OpenNext adapter config.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Deploy from your machine:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run deploy
+```
+
+Or connect the repo to **Cloudflare → Workers & Pages → Workers Builds** with
+the Next.js (OpenNext) preset.
+
+### Runtime model — important constraints
+
+- **Pages and route handlers must NOT declare `export const runtime = "edge"`.**
+  OpenNext for Cloudflare only supports the Node.js runtime; edge routes crash
+  the Worker with a bare `500 Internal Server Error`.
+- **`src/middleware.ts` must stay named `middleware.ts`** (Edge Middleware).
+  Next.js 16 prints a deprecation warning suggesting `proxy.ts`, but the `proxy`
+  convention runs on Node.js, which OpenNext rejects with "Node.js middleware is
+  not currently supported." Keep it as `middleware.ts`.
+
+### Environment variables on Cloudflare
+
+Clerk needs two keys, and **where** you set them matters:
+
+| Variable | Where it must exist | How to set it |
+| --- | --- | --- |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | **Build time** (inlined into the client bundle by Next.js) **and** runtime | Add as a **build variable** in Workers Builds settings. Publishable keys are public, so it can also be a plain Worker variable. |
+| `CLERK_SECRET_KEY` | **Runtime** only | Worker **secret**: `npx wrangler secret put CLERK_SECRET_KEY`, or the dashboard's encrypted variables. |
+
+> ⚠️ The most common deploy failure: adding `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+> only as a *runtime* variable. Because Next.js inlines `NEXT_PUBLIC_*` at build
+> time, it must be present **when the Worker is built**, or Clerk fails and every
+> page returns a 500.
+
+For local Worker testing (`npm run preview`), copy `.dev.vars.example` to
+`.dev.vars` and fill in your test keys.

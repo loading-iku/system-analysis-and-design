@@ -1,0 +1,9 @@
+# Local runtime variables for `npm run preview` (opennextjs-cloudflare preview).
+# Copy this file to `.dev.vars` and fill in your Clerk TEST keys from
+# https://dashboard.clerk.com (the keys are NOT committed to git).
+#
+# IMPORTANT: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY must ALSO be present at BUILD time
+# (it is inlined into the client bundle by Next.js). On Cloudflare Workers Builds
+# add it as a *build* variable too — not only as a runtime variable. See README.md.
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_replace-with-your-clerk-test-publishable-key"
+CLERK_SECRET_KEY="sk_test_replace-with-your-clerk-test-secret-key"

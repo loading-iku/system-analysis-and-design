@@ -7,7 +7,6 @@ import { getLeaderboardEntries } from "@/lib/leaderboardServer";
 import styles from "./page.module.css";
 
 export const dynamic = "force-dynamic";
-export const runtime = "edge";
 
 export default async function OnboardingPage() {
   const initialEntries = await getLeaderboardEntries();

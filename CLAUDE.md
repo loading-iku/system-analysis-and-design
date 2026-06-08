@@ -15,7 +15,15 @@
 - `ParkourChallengeModal` supports bounded challenge rooms with moving obstacles, reset-on-hit behavior, and reward/penalty integration through the main engine.
 - Progress is Clerk-backed in v2: `GET /api/progress` reads `logicPathProgressV2` from Clerk private metadata; `POST /api/progress/runs` merges completed `LevelSummary` payloads and de-duplicates repeated run submissions. `src/lib/progress.ts` keeps an SSR-safe client cache with localStorage fallback/migration, but authenticated Clerk metadata is the intended source of truth.
 - `/levels` uses the v2 profile to show unlock state, best ending, endings seen, attempts, XP, and coins. Unlocks still follow manifest order: a level unlocks when the previous level has any clearing ending.
-- App access remains gated by Clerk auth in `src/proxy.ts`, protecting `/start` and `/levels(.*)`.
+- App access remains gated by Clerk auth in `src/middleware.ts` (Edge Middleware), protecting `/start` and `/levels(.*)`.
+
+## Deployment (Cloudflare Workers + OpenNext)
+- The app deploys as a Cloudflare **Worker** via `@opennextjs/cloudflare` (the live site shows `X-Opennext: 1` on `*.workers.dev`). Config lives in `wrangler.jsonc` and `open-next.config.ts`; deploy with `npm run deploy`, smoke-test locally with `npm run preview`.
+- `wrangler.jsonc` MUST keep `compatibility_flags: ["nodejs_compat"]`. OpenNext runs the Next.js server in the Workers Node.js runtime — NOT the Edge runtime.
+- Pages and route handlers MUST NOT declare `export const runtime = "edge"`. OpenNext does not support edge routes; they crash the Worker with a bare `500 Internal Server Error`. This was the cause of the production 500 — all 7 server routes had been marked edge.
+- The auth gate MUST stay named `src/middleware.ts` (Edge Middleware). Next 16 warns to rename it to `proxy.ts`, but the `proxy` convention runs on Node.js, which OpenNext rejects ("Node.js middleware is not currently supported"). Do not rename it.
+- Clerk env vars: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is inlined at BUILD time (set it as a Workers Build variable, not only a runtime var); `CLERK_SECRET_KEY` is a runtime secret (`wrangler secret put`). See README.md.
+- The deprecated Cloudflare **Pages** path (`@cloudflare/next-on-pages`, `scripts/build.mjs`) has been removed; `npm run build` is now plain `next build`.
 
 ## Level Content
 - `place-order`: checkout labyrinth with optional/best-route learning around 3D Secure. Current verifier reports 10 gates, 10 endings, 23 reachable routes, 1 challenge, and 1 completing ending.
@@ -26,6 +34,8 @@
 - `npm run verify:levels:v2` passes for all three v2 level files: dimensions, references, routes, endings, and challenge references validate.
 - `npm run lint` passes.
 - `npm run build` passes.
+- `npx opennextjs-cloudflare build` produces `.open-next/worker.js`, and `npx wrangler deploy --dry-run` validates the bundle, the `ASSETS` binding, and the `nodejs_compat` config.
+- Next.js is pinned to `16.2.7`, the minimum supported by `@opennextjs/cloudflare` (the adapter's peer range excludes `16.0.x`–`16.2.5`).
 - Dev server runs on the next available port; during the latest check, port 3000 was busy and Next served at `http://localhost:3002`.
 - Browser smoke check reached `/levels` and correctly redirected to the Clerk login screen when unauthenticated. Authenticated gameplay still needs manual browser QA with a signed-in session.
 
@@ -38,12 +48,15 @@
 - Keep the old drag/drop activity-diagram builder as a Diagram Wizard challenge mechanic, not as the main level runtime.
 - Maintain TypeScript strictness and ESLint cleanliness.
 - Treat Clerk private metadata as the canonical v2 progress store for authenticated users.
+- Do NOT add `export const runtime = "edge"` to pages/route handlers, and do NOT rename `src/middleware.ts` to `proxy.ts` — both break the OpenNext / Cloudflare Workers deploy (see Deployment).
 
 ## Known Good Commands
 - `npm run dev`
 - `npm run verify:levels:v2`
 - `npm run lint`
 - `npm run build`
+- `npm run preview` (local Cloudflare Worker via workerd)
+- `npm run deploy` (build + deploy the Worker to Cloudflare)
 
 ## Follow-Up Ideas
 - Run authenticated manual QA for all three levels: WASD/arrows, camera tracking, gate labels, endings, Diagram Wizard, parkour, completion overlay, and progress persistence after refresh/re-login.
