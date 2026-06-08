@@ -13,14 +13,59 @@
   --color-success: #16a34a;
   --color-hint: #b45309;
 
-  --font-mono-stack: var(--font-mono), "Roboto Mono", ui-monospace, "SF Mono",
-    Menlo, Consolas, monospace;
+  --font-mono-stack: "Roboto Mono", ui-monospace, "SF Mono", Menlo, Consolas,
+    monospace;
 
   --line-height: 1.5;
   --gutter-width: 4ch;
   --gutter-gap: 2ch;
   --cell-size: 36px;
   --tile-size: 64px;
+
+  --game-brick-image: url("/brick.png");
+  --game-playfield-vignette: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 24%,
+    rgba(0, 0, 0, 0.16) 52%,
+    rgba(0, 0, 0, 0.42) 78%,
+    rgba(0, 0, 0, 0.72) 100%
+  );
+  --game-playfield-scrim: linear-gradient(
+    rgba(28, 18, 13, 0.68),
+    rgba(28, 18, 13, 0.68)
+  );
+  --game-playfield-background-image: var(--game-playfield-vignette),
+    var(--game-playfield-scrim), var(--game-brick-image);
+  --game-playfield-background-size:
+    var(--game-surface-width, 100%) var(--game-surface-height, 100%),
+    100% 100%,
+    var(--surface-tile-size, var(--tile-size))
+      var(--surface-tile-size, var(--tile-size));
+  --game-playfield-background-position:
+    calc(-1 * var(--surface-offset-x, 0px))
+      calc(-1 * var(--surface-offset-y, 0px)),
+    0 0,
+    calc(-1 * var(--surface-offset-x, 0px))
+      calc(-1 * var(--surface-offset-y, 0px));
+  --game-playfield-background-repeat: no-repeat, no-repeat, repeat;
+
+  --game-panel-vignette: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.08) 28%,
+    rgba(0, 0, 0, 0.08) 72%,
+    rgba(0, 0, 0, 0.28) 100%
+  );
+  --game-panel-scrim: linear-gradient(
+    rgba(244, 238, 230, 0.78),
+    rgba(244, 238, 230, 0.78)
+  );
+  --game-panel-background-image: var(--game-panel-vignette),
+    var(--game-panel-scrim), var(--game-brick-image);
+  --game-panel-background-size: 100% 100%, 100% 100%, 176px 176px;
+  --game-panel-background-position: center, 0 0, 0 0;
+  --game-panel-background-repeat: no-repeat, no-repeat, repeat;
 }
 
 *,
@@ -33,7 +78,6 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: var(--color-bg);
   color: var(--color-text);
 }
 
@@ -42,6 +86,7 @@ body {
   font-size: 18px;
   line-height: var(--line-height);
   min-height: 100vh;
+  background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

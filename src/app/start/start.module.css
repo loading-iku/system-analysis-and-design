@@ -1,3 +1,21 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: 32px;
+  align-items: start;
+}
+
+.shellStack {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.shell {
+  min-width: 0;
+}
+
 .ascii {
   margin: 0;
   font-family: var(--font-mono-stack);
@@ -5,4 +23,10 @@
   line-height: var(--line-height);
   white-space: pre;
   color: var(--color-text);
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
 }

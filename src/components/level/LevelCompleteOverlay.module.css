@@ -1,10 +1,15 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: var(--color-bg);
+  background-color: #efe6db;
+  background-image: var(--game-panel-background-image);
+  background-size: var(--game-panel-background-size);
+  background-position: var(--game-panel-background-position);
+  background-repeat: var(--game-panel-background-repeat);
   display: flex;
   justify-content: flex-start;
   padding: 48px 64px;
+  overflow-y: auto;
   z-index: 250;
 }
 
@@ -13,8 +18,80 @@
   max-width: 960px;
 }
 
+.endingsHeading {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.endingRow {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.endingMark {
+  flex: 0 0 auto;
+  color: var(--color-muted);
+}
+
+.endingTier {
+  flex: 0 0 6em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
+}
+
+.endingTitle {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.unlockRow {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.unlockMark {
+  flex: 0 0 auto;
+  color: var(--color-success);
+}
+
+.unlockTitle {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Discovered endings read clearly; the just-reached one is marked. */
+.endingRow[data-discovered="true"] .endingMark {
+  color: var(--color-text);
+}
+
+.endingRow[data-current="true"] .endingTitle::after {
+  content: " <-- this run";
+  color: var(--color-muted);
+}
+
+/* Undiscovered endings stay distinctly redacted until they are found. */
+.endingRow[data-discovered="false"] {
+  color: var(--color-muted);
+  opacity: 0.75;
+}
+
+.endingRow[data-discovered="false"] .endingTitle {
+  font-style: italic;
+}
+
+.endingsHint {
+  color: var(--color-muted);
+}
+
 @media (max-width: 640px) {
   .overlay {
     padding: 24px 16px;
+  }
+
+  .endingTier {
+    flex-basis: 4.5em;
   }
 }

@@ -1,0 +1,1054 @@
+{
+  "schemaVersion": 2,
+  "engine": "labyrinth",
+  "id": "user-login",
+  "title": "User Login Maze",
+  "concept": "Login checks and recovery paths",
+  "scenario": "Walk from login start to dashboard. Branch to guest view, reset, lockout, hidden ops, or the secure path.",
+  "objective": "Move down through the login rooms and choose the clearest door at each check.",
+  "recommendedRouteId": "best-2fa-route",
+  "recommendedEndingId": "secure-dashboard",
+  "tags": [
+    "login",
+    "security",
+    "2fa",
+    "reset"
+  ],
+  "toolbox": [
+    {
+      "id": "A",
+      "shape": "action",
+      "label": "Action"
+    },
+    {
+      "id": "B",
+      "shape": "decision",
+      "label": "Decision"
+    },
+    {
+      "id": "C",
+      "shape": "alert",
+      "label": "Alert / End"
+    }
+  ],
+  "labyrinth": {
+    "format": "room-graph",
+    "width": 36,
+    "height": 41,
+    "start": [
+      17,
+      2
+    ],
+    "rows": [
+      "####################################",
+      "###############.....################",
+      "###############.....################",
+      "###############.....################",
+      "#######...........##################",
+      "#######.#######.....################",
+      "#######.#######.....################",
+      "#######.#######.....################",
+      "#######.#########.##################",
+      "#######.#######.....#######......###",
+      "#######..........................###",
+      "#######.#######.....#######......###",
+      "#######.#########.############.#####",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "#######.#########.##################",
+      "###........####.....################",
+      "###........####................#####",
+      "###........####.....##########.#####",
+      "#######.#########..............#####",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "#######.#########.############.#####",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "#################.############.#####",
+      "###############.....#######......###",
+      "###############.....#######......###",
+      "###############.....#######......###",
+      "#################.##################",
+      "###############.....################",
+      "###############.....################",
+      "###############.....################",
+      "#################.##################",
+      "###############.....################",
+      "###############.....################",
+      "###############.....################",
+      "####################################"
+    ],
+    "grid": [
+      "####################################",
+      "###############.....################",
+      "###############.....################",
+      "###############.....################",
+      "#######...........##################",
+      "#######.#######.....################",
+      "#######.#######.....################",
+      "#######.#######.....################",
+      "#######.#########.##################",
+      "#######.#######.....#######......###",
+      "#######..........................###",
+      "#######.#######.....#######......###",
+      "#######.#########.############.#####",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "#######.#########.##################",
+      "###........####.....################",
+      "###........####................#####",
+      "###........####.....##########.#####",
+      "#######.#########..............#####",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "#######.#########.############.#####",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "#################.############.#####",
+      "###############.....#######......###",
+      "###############.....#######......###",
+      "###############.....#######......###",
+      "#################.##################",
+      "###############.....################",
+      "###############.....################",
+      "###############.....################",
+      "#################.##################",
+      "###############.....################",
+      "###############.....################",
+      "###############.....################",
+      "####################################"
+    ],
+    "legend": {
+      "#": {
+        "kind": "wall",
+        "walkable": false,
+        "label": "Wall"
+      },
+      ".": {
+        "kind": "floor",
+        "walkable": true,
+        "label": "Room or path"
+      }
+    },
+    "kind": "room-graph",
+    "rooms": [
+      {
+        "id": "entry",
+        "label": "Login start",
+        "x": 15,
+        "y": 1,
+        "width": 5,
+        "height": 3,
+        "kind": "start",
+        "gateId": "entry-lobby"
+      },
+      {
+        "id": "format",
+        "label": "Check format",
+        "x": 15,
+        "y": 5,
+        "width": 5,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "format-scanner"
+      },
+      {
+        "id": "find-account",
+        "label": "Find account",
+        "x": 15,
+        "y": 9,
+        "width": 5,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "directory-turnstile"
+      },
+      {
+        "id": "guest-help",
+        "label": "Guest view",
+        "x": 27,
+        "y": 9,
+        "width": 6,
+        "height": 3,
+        "kind": "side",
+        "gateId": "help-kiosk"
+      },
+      {
+        "id": "guest-preview",
+        "label": "Guest end",
+        "x": 27,
+        "y": 13,
+        "width": 6,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "guest-preview"
+      },
+      {
+        "id": "recovery",
+        "label": "Reset password",
+        "x": 3,
+        "y": 13,
+        "width": 8,
+        "height": 3,
+        "kind": "fix",
+        "gateId": "recovery-desk"
+      },
+      {
+        "id": "password",
+        "label": "Check password",
+        "x": 15,
+        "y": 13,
+        "width": 5,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "password-vault"
+      },
+      {
+        "id": "yield",
+        "label": "Back from reset",
+        "x": 3,
+        "y": 17,
+        "width": 8,
+        "height": 3,
+        "kind": "fix",
+        "gateId": "yield-yard"
+      },
+      {
+        "id": "bot-check",
+        "label": "Bot check",
+        "x": 15,
+        "y": 17,
+        "width": 5,
+        "height": 3,
+        "kind": "challenge",
+        "gateId": "bot-defense-yard"
+      },
+      {
+        "id": "audit",
+        "label": "Check logs",
+        "x": 3,
+        "y": 21,
+        "width": 8,
+        "height": 3,
+        "kind": "side",
+        "gateId": "audit-balcony"
+      },
+      {
+        "id": "locked",
+        "label": "Locked out",
+        "x": 15,
+        "y": 21,
+        "width": 5,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "account-locked"
+      },
+      {
+        "id": "maintenance",
+        "label": "Hidden ops",
+        "x": 27,
+        "y": 21,
+        "width": 6,
+        "height": 3,
+        "kind": "secret",
+        "gateId": "maintenance-duct"
+      },
+      {
+        "id": "recovery-complete",
+        "label": "Reset done",
+        "x": 3,
+        "y": 25,
+        "width": 8,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "recovery-complete"
+      },
+      {
+        "id": "trusted",
+        "label": "Trust device",
+        "x": 15,
+        "y": 25,
+        "width": 5,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "trusted-device-bridge"
+      },
+      {
+        "id": "shadow-ops",
+        "label": "Secret end",
+        "x": 27,
+        "y": 25,
+        "width": 6,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "shadow-ops-room"
+      },
+      {
+        "id": "timeout",
+        "label": "Timed out",
+        "x": 27,
+        "y": 29,
+        "width": 6,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "rate-limit-timeout"
+      },
+      {
+        "id": "otp",
+        "label": "2FA code",
+        "x": 15,
+        "y": 29,
+        "width": 5,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "otp-tower"
+      },
+      {
+        "id": "session",
+        "label": "Create session",
+        "x": 15,
+        "y": 33,
+        "width": 5,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "session-foundry"
+      },
+      {
+        "id": "dashboard",
+        "label": "Dashboard",
+        "x": 15,
+        "y": 37,
+        "width": 5,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "secure-dashboard"
+      }
+    ],
+    "links": [
+      {
+        "id": "entry-format",
+        "fromRoomId": "entry",
+        "toRoomId": "format",
+        "kind": "best"
+      },
+      {
+        "id": "entry-recovery",
+        "fromRoomId": "entry",
+        "toRoomId": "recovery",
+        "kind": "fix",
+        "points": [
+          [
+            17,
+            4
+          ],
+          [
+            7,
+            4
+          ]
+        ]
+      },
+      {
+        "id": "format-find",
+        "fromRoomId": "format",
+        "toRoomId": "find-account",
+        "kind": "best"
+      },
+      {
+        "id": "find-guest",
+        "fromRoomId": "find-account",
+        "toRoomId": "guest-help",
+        "kind": "side"
+      },
+      {
+        "id": "guest-end",
+        "fromRoomId": "guest-help",
+        "toRoomId": "guest-preview",
+        "kind": "side"
+      },
+      {
+        "id": "find-password",
+        "fromRoomId": "find-account",
+        "toRoomId": "password",
+        "kind": "best"
+      },
+      {
+        "id": "find-recovery",
+        "fromRoomId": "find-account",
+        "toRoomId": "recovery",
+        "kind": "fix"
+      },
+      {
+        "id": "recovery-yield",
+        "fromRoomId": "recovery",
+        "toRoomId": "yield",
+        "kind": "fix"
+      },
+      {
+        "id": "yield-audit",
+        "fromRoomId": "yield",
+        "toRoomId": "audit",
+        "kind": "fix"
+      },
+      {
+        "id": "audit-end",
+        "fromRoomId": "audit",
+        "toRoomId": "recovery-complete",
+        "kind": "fix"
+      },
+      {
+        "id": "password-locked",
+        "fromRoomId": "password",
+        "toRoomId": "locked",
+        "kind": "failure"
+      },
+      {
+        "id": "password-bot",
+        "fromRoomId": "password",
+        "toRoomId": "bot-check",
+        "kind": "best"
+      },
+      {
+        "id": "bot-trusted",
+        "fromRoomId": "bot-check",
+        "toRoomId": "trusted",
+        "kind": "best"
+      },
+      {
+        "id": "bot-secret",
+        "fromRoomId": "bot-check",
+        "toRoomId": "maintenance",
+        "kind": "secret"
+      },
+      {
+        "id": "secret-end",
+        "fromRoomId": "maintenance",
+        "toRoomId": "shadow-ops",
+        "kind": "secret"
+      },
+      {
+        "id": "bot-timeout",
+        "fromRoomId": "bot-check",
+        "toRoomId": "timeout",
+        "kind": "failure",
+        "points": [
+          [
+            17,
+            20
+          ],
+          [
+            30,
+            20
+          ]
+        ]
+      },
+      {
+        "id": "trusted-otp",
+        "fromRoomId": "trusted",
+        "toRoomId": "otp",
+        "kind": "best"
+      },
+      {
+        "id": "otp-session",
+        "fromRoomId": "otp",
+        "toRoomId": "session",
+        "kind": "best"
+      },
+      {
+        "id": "session-dashboard",
+        "fromRoomId": "session",
+        "toRoomId": "dashboard",
+        "kind": "best"
+      }
+    ],
+    "map": [
+      "####################################",
+      "###############.....################",
+      "###############.....################",
+      "###############.....################",
+      "#######...........##################",
+      "#######.#######.....################",
+      "#######.#######.....################",
+      "#######.#######.....################",
+      "#######.#########.##################",
+      "#######.#######.....#######......###",
+      "#######..........................###",
+      "#######.#######.....#######......###",
+      "#######.#########.############.#####",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "#######.#########.##################",
+      "###........####.....################",
+      "###........####................#####",
+      "###........####.....##########.#####",
+      "#######.#########..............#####",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "#######.#########.############.#####",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "#################.############.#####",
+      "###############.....#######......###",
+      "###############.....#######......###",
+      "###############.....#######......###",
+      "#################.##################",
+      "###############.....################",
+      "###############.....################",
+      "###############.....################",
+      "#################.##################",
+      "###############.....################",
+      "###############.....################",
+      "###############.....################",
+      "####################################"
+    ],
+    "layout": [
+      "####################################",
+      "###############.....################",
+      "###############.....################",
+      "###############.....################",
+      "#######...........##################",
+      "#######.#######.....################",
+      "#######.#######.....################",
+      "#######.#######.....################",
+      "#######.#########.##################",
+      "#######.#######.....#######......###",
+      "#######..........................###",
+      "#######.#######.....#######......###",
+      "#######.#########.############.#####",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "#######.#########.##################",
+      "###........####.....################",
+      "###........####................#####",
+      "###........####.....##########.#####",
+      "#######.#########..............#####",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "#######.#########.############.#####",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "###........####.....#######......###",
+      "#################.############.#####",
+      "###############.....#######......###",
+      "###############.....#######......###",
+      "###############.....#######......###",
+      "#################.##################",
+      "###############.....################",
+      "###############.....################",
+      "###############.....################",
+      "#################.##################",
+      "###############.....################",
+      "###############.....################",
+      "###############.....################",
+      "####################################"
+    ]
+  },
+  "gates": [
+    {
+      "id": "entry-lobby",
+      "symbol": "L",
+      "label": "Login start",
+      "kind": "start",
+      "summary": "Start the login flow.",
+      "coord": [
+        17,
+        2
+      ]
+    },
+    {
+      "id": "format-scanner",
+      "symbol": "F",
+      "label": "Check format",
+      "kind": "checkpoint",
+      "summary": "Reject clearly wrong input.",
+      "coord": [
+        17,
+        6
+      ]
+    },
+    {
+      "id": "directory-turnstile",
+      "symbol": "A",
+      "label": "Find account",
+      "kind": "checkpoint",
+      "summary": "Look for the user account.",
+      "coord": [
+        17,
+        10
+      ]
+    },
+    {
+      "id": "help-kiosk",
+      "symbol": "G",
+      "label": "Guest view",
+      "kind": "side",
+      "summary": "Open a limited preview.",
+      "coord": [
+        30,
+        10
+      ]
+    },
+    {
+      "id": "recovery-desk",
+      "symbol": "R",
+      "label": "Reset password",
+      "kind": "recovery",
+      "summary": "Start password reset.",
+      "coord": [
+        7,
+        14
+      ]
+    },
+    {
+      "id": "password-vault",
+      "symbol": "P",
+      "label": "Check password",
+      "kind": "checkpoint",
+      "summary": "Check if the password matches.",
+      "coord": [
+        17,
+        14
+      ]
+    },
+    {
+      "id": "bot-defense-yard",
+      "symbol": "B",
+      "label": "Bot check",
+      "kind": "challenge",
+      "summary": "Pass a quick anti-bot run.",
+      "coord": [
+        17,
+        18
+      ]
+    },
+    {
+      "id": "audit-balcony",
+      "symbol": "O",
+      "label": "Check logs",
+      "kind": "side",
+      "summary": "Review reset and login records.",
+      "coord": [
+        7,
+        22
+      ]
+    },
+    {
+      "id": "maintenance-duct",
+      "symbol": "H",
+      "label": "Hidden ops",
+      "kind": "secret",
+      "summary": "A hidden security room.",
+      "coord": [
+        30,
+        22
+      ]
+    },
+    {
+      "id": "trusted-device-bridge",
+      "symbol": "T",
+      "label": "Trust device",
+      "kind": "checkpoint",
+      "summary": "Accept this device for login.",
+      "coord": [
+        17,
+        26
+      ]
+    },
+    {
+      "id": "otp-tower",
+      "symbol": "2",
+      "label": "2FA code",
+      "kind": "security",
+      "summary": "Check the one-time code.",
+      "coord": [
+        17,
+        30
+      ]
+    },
+    {
+      "id": "yield-yard",
+      "symbol": "Y",
+      "label": "Back from reset",
+      "kind": "recovery",
+      "summary": "Return after reset steps.",
+      "coord": [
+        7,
+        18
+      ]
+    },
+    {
+      "id": "session-foundry",
+      "symbol": "S",
+      "label": "Create session",
+      "kind": "checkpoint",
+      "summary": "Create the login session.",
+      "coord": [
+        17,
+        34
+      ]
+    }
+  ],
+  "obstacles": [
+    {
+      "id": "rate-limit-parkour",
+      "type": "parkour",
+      "label": "Bot Check Run",
+      "gateId": "bot-defense-yard",
+      "theme": "moving blocks",
+      "successGateId": "trusted-device-bridge",
+      "failureEndingId": "rate-limit-timeout",
+      "secretGateId": "maintenance-duct",
+      "checkpoints": [
+        {
+          "coord": [
+            15,
+            5
+          ],
+          "label": "Moving Blocks",
+          "move": "jump"
+        },
+        {
+          "coord": [
+            17,
+            7
+          ],
+          "label": "Slow Zone",
+          "move": "wall-jump"
+        },
+        {
+          "coord": [
+            19,
+            9
+          ],
+          "label": "Safe Tile",
+          "move": "reach goal"
+        }
+      ],
+      "teachingPoint": "Rate limiting and bot defense are security controls too, even when they are not UML nodes."
+    }
+  ],
+  "routes": [
+    {
+      "id": "best-2fa-route",
+      "label": "Secure login",
+      "classification": "best",
+      "gateIds": [
+        "entry-lobby",
+        "format-scanner",
+        "directory-turnstile",
+        "password-vault",
+        "bot-defense-yard",
+        "trusted-device-bridge",
+        "otp-tower",
+        "session-foundry"
+      ],
+      "endingId": "secure-dashboard",
+      "notes": "Good path: password, bot check, device trust, 2FA, then dashboard."
+    },
+    {
+      "id": "easy-guest-route",
+      "label": "Guest view",
+      "classification": "easy",
+      "gateIds": [
+        "entry-lobby",
+        "format-scanner",
+        "directory-turnstile",
+        "help-kiosk"
+      ],
+      "endingId": "guest-preview",
+      "notes": "Side path: quick preview, not a full login."
+    },
+    {
+      "id": "lockout-route",
+      "label": "Wrong password",
+      "classification": "failure",
+      "gateIds": [
+        "entry-lobby",
+        "format-scanner",
+        "directory-turnstile",
+        "password-vault"
+      ],
+      "endingId": "account-locked",
+      "notes": "Bad end: repeated wrong passwords lock the account."
+    },
+    {
+      "id": "rate-limit-failure-route",
+      "label": "Bot check fail",
+      "classification": "failure",
+      "gateIds": [
+        "entry-lobby",
+        "format-scanner",
+        "directory-turnstile",
+        "password-vault",
+        "bot-defense-yard"
+      ],
+      "endingId": "rate-limit-timeout",
+      "notes": "Bad end: the anti-bot check times out."
+    },
+    {
+      "id": "recovery-reset-route",
+      "label": "Reset password",
+      "classification": "recovery",
+      "gateIds": [
+        "entry-lobby",
+        "recovery-desk",
+        "yield-yard",
+        "audit-balcony"
+      ],
+      "endingId": "recovery-complete",
+      "notes": "Fix path: reset the password and finish safely."
+    },
+    {
+      "id": "maintenance-secret-route",
+      "label": "Hidden ops",
+      "classification": "secret",
+      "gateIds": [
+        "entry-lobby",
+        "format-scanner",
+        "directory-turnstile",
+        "password-vault",
+        "bot-defense-yard",
+        "maintenance-duct"
+      ],
+      "endingId": "shadow-ops-room",
+      "notes": "Side path: find the hidden ops room."
+    }
+  ],
+  "endings": [
+    {
+      "id": "guest-preview",
+      "symbol": "G",
+      "label": "Guest end",
+      "kind": "standard",
+      "summary": "The user gets a limited guest view.",
+      "outcome": "standard",
+      "initiallyUnlocked": true,
+      "unlocksEndingIds": [],
+      "coord": [
+        30,
+        14
+      ]
+    },
+    {
+      "id": "secure-dashboard",
+      "symbol": "D",
+      "label": "Dashboard",
+      "kind": "best",
+      "summary": "The user reaches the secure dashboard.",
+      "outcome": "best",
+      "initiallyUnlocked": true,
+      "unlocksEndingIds": [
+        "rate-limit-timeout",
+        "shadow-ops-room"
+      ],
+      "coord": [
+        17,
+        38
+      ]
+    },
+    {
+      "id": "account-locked",
+      "symbol": "K",
+      "label": "Locked out",
+      "kind": "failure",
+      "summary": "Too many bad attempts lock the account.",
+      "outcome": "failure",
+      "initiallyUnlocked": true,
+      "unlocksEndingIds": [
+        "recovery-complete"
+      ],
+      "coord": [
+        17,
+        22
+      ]
+    },
+    {
+      "id": "rate-limit-timeout",
+      "symbol": "X",
+      "label": "Timed out",
+      "kind": "failure",
+      "summary": "The bot check is not passed in time.",
+      "outcome": "failure",
+      "initiallyUnlocked": false,
+      "unlocksEndingIds": [],
+      "coord": [
+        30,
+        30
+      ]
+    },
+    {
+      "id": "recovery-complete",
+      "symbol": "U",
+      "label": "Reset done",
+      "kind": "recovery",
+      "summary": "The password reset path succeeds.",
+      "outcome": "recovery",
+      "initiallyUnlocked": false,
+      "unlocksEndingIds": [],
+      "coord": [
+        7,
+        26
+      ]
+    },
+    {
+      "id": "shadow-ops-room",
+      "symbol": "Z",
+      "label": "Secret end",
+      "kind": "secret",
+      "summary": "A hidden security-ops room is found.",
+      "outcome": "secret",
+      "initiallyUnlocked": false,
+      "unlocksEndingIds": [],
+      "coord": [
+        30,
+        26
+      ]
+    }
+  ],
+  "hints": [
+    "Good path goes mostly down.",
+    "Reset is a fix path, not a failure.",
+    "Hidden ops is just a side reward."
+  ],
+  "rootStepId": "s1",
+  "steps": [
+    {
+      "id": "s1",
+      "kind": "place",
+      "shape": "start",
+      "expectedToolboxId": "_auto_start",
+      "nodeLabel": "User enters the login portal",
+      "labyrinthMove": "right",
+      "hint": "Every flow starts with an Initial Node.",
+      "nextStepId": "s2"
+    },
+    {
+      "id": "s2",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Validate email and username format",
+      "labyrinthMove": "right",
+      "hint": "Input validation is an Action.",
+      "nextStepId": "s3"
+    },
+    {
+      "id": "s3",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Look up account and throttle state",
+      "labyrinthMove": "down",
+      "hint": "Reading the user record is another Action.",
+      "nextStepId": "s4"
+    },
+    {
+      "id": "s4",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Check password and prepare 2FA challenge",
+      "labyrinthMove": "right",
+      "hint": "Credential verification is an Action before the branch point.",
+      "nextStepId": "s5"
+    },
+    {
+      "id": "s5",
+      "kind": "decision",
+      "shape": "decision",
+      "nodeLabel": "Password accepted?",
+      "labyrinthMove": "right",
+      "hint": "A Decision Node splits failed and successful authentication attempts.",
+      "branches": [
+        {
+          "guardLabel": "No",
+          "labyrinthDir": "down",
+          "nextStepId": "s5a"
+        },
+        {
+          "guardLabel": "Yes",
+          "labyrinthDir": "right",
+          "nextStepId": "s5b"
+        }
+      ]
+    },
+    {
+      "id": "s5a",
+      "kind": "place",
+      "shape": "alert",
+      "expectedToolboxId": "C",
+      "nodeLabel": "Show lockout warning and recovery guidance",
+      "labyrinthMove": "down",
+      "hint": "A failed login path can end with an alert.",
+      "nextStepId": "s5aEnd"
+    },
+    {
+      "id": "s5aEnd",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "End",
+      "labyrinthMove": "down",
+      "hint": "Alternate flows still need a Final Node."
+    },
+    {
+      "id": "s5b",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Cross bot-defense yard",
+      "labyrinthMove": "down",
+      "hint": "Security traversal is modeled as an Action in the fallback flow.",
+      "nextStepId": "s6"
+    },
+    {
+      "id": "s6",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Issue and verify 2FA code",
+      "labyrinthMove": "right",
+      "hint": "The second factor belongs in the successful authentication path.",
+      "nextStepId": "s7"
+    },
+    {
+      "id": "s7",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Create secure session token",
+      "labyrinthMove": "down",
+      "hint": "The session is only created after the credential and 2FA checks pass.",
+      "nextStepId": "s8"
+    },
+    {
+      "id": "s8",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Redirect to secure dashboard",
+      "labyrinthMove": "right",
+      "hint": "Redirecting after a successful login is an Action.",
+      "nextStepId": "s9"
+    },
+    {
+      "id": "s9",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "Login successful",
+      "labyrinthMove": "down",
+      "hint": "The happy path also closes with a Final Node."
+    }
+  ]
+}

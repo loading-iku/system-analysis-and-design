@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "verify:levels:v2": "node scripts/verify-levels-v2.mjs"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.4.2",
+    "@fontsource/roboto-mono": "^5.2.9",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"

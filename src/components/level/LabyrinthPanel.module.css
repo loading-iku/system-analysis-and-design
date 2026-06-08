@@ -1,53 +1,248 @@
-.panel {
-  background: var(--color-panel);
-  padding: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 320px;
-}
-
-.grid {
+.viewport {
   position: relative;
-  display: grid;
-  background: var(--color-wall);
+  overflow: hidden;
+  min-height: 70vh;
+  height: 100%;
+  border: 1.5px solid var(--color-text);
+  /* Dark void behind the cells: undiscovered tiles fade toward black
+     (fog of war) instead of washing out against a light panel. */
+  background: #000000;
+  outline: 2px solid transparent;
 }
 
-.cell {
-  width: var(--cell-size);
-  height: var(--cell-size);
-  transition: background 0.3s ease, opacity 0.4s ease;
+.focused {
+  outline-color: var(--color-link);
+  outline-offset: 4px;
 }
 
-.wall {
-  background: var(--color-wall);
-}
-
-.corridor {
-  background: var(--color-corridor);
-}
-
-.dimmed {
-  opacity: 0.55;
-}
-
-.character {
+.world {
   position: absolute;
   top: 0;
   left: 0;
-  width: var(--cell-size);
-  height: var(--cell-size);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 2;
+  transition: transform 0.08s linear;
 }
 
-.character::after {
-  content: "";
-  width: calc(var(--cell-size) * 0.7);
-  height: calc(var(--cell-size) * 0.7);
-  background: var(--color-character);
+.cells {
+  position: absolute;
+  inset: 0;
+}
+
+.cell {
+  position: absolute;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.wall {
+  background-image: url("/brick.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.floor {
+  background-color: #271813;
+  background-image: var(--game-playfield-background-image);
+  background-size: var(--game-playfield-background-size);
+  background-position: var(--game-playfield-background-position);
+  background-repeat: var(--game-playfield-background-repeat);
+}
+
+.hidden {
+  opacity: 0.08;
+}
+
+/* Undiscovered walls keep the brick visible but dimmed toward the black
+   void behind them, rather than fading almost fully out like floors. */
+.wall.hidden {
+  opacity: 0.4;
+}
+
+.revealed {
+  opacity: 1;
+}
+
+.room {
+  --game-playfield-vignette: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 20%,
+    rgba(0, 0, 0, 0.24) 48%,
+    rgba(0, 0, 0, 0.52) 76%,
+    rgba(0, 0, 0, 0.78) 100%
+  );
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  border: 2px solid var(--color-text);
+  background-color: #2d1c16;
+  background-image: var(--game-playfield-background-image);
+  background-size:
+    100% 100%,
+    100% 100%,
+    var(--surface-tile-size, var(--tile-size))
+      var(--surface-tile-size, var(--tile-size));
+  background-position:
+    center,
+    0 0,
+    calc(-1 * var(--surface-offset-x, 0px))
+      calc(-1 * var(--surface-offset-y, 0px));
+  background-repeat: no-repeat, no-repeat, repeat;
+  pointer-events: none;
+}
+
+.roomStart {
+  border-style: double;
+}
+
+.roomGate {
+  box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.roomEnding {
+  border-style: dashed;
+}
+
+.roomLabel {
+  max-width: calc(100% - 16px);
+  padding: 2px 6px;
+  border: 1px solid var(--color-text);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 11px;
+  line-height: 1.2;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.compassNeedle {
+  position: absolute;
+  z-index: 3;
+  width: 34px;
+  height: 2px;
+  transform-origin: 0 50%;
+  background: var(--color-link);
+  box-shadow: 0 0 0 1px var(--color-bg);
+}
+
+.compassNeedle::after {
+  content: ">";
+  position: absolute;
+  right: -7px;
+  top: -8px;
+  color: var(--color-link);
+  font-size: 13px;
+}
+
+.coin {
+  position: absolute;
+  z-index: 3;
+  width: 18px;
+  height: 18px;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--color-text);
+  background: var(--color-bg);
+  color: var(--color-hint);
+  font-size: 12px;
+  line-height: 1;
+  box-shadow: 2px 2px 0 var(--color-text);
+}
+
+.barrier {
+  position: absolute;
+  z-index: 3;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.barrierClosed {
+  background-image: url("/ironbars_closed.png");
+}
+
+.barrierOpen {
+  background-image: url("/ironbars_open.png");
+}
+
+.player {
+  position: absolute;
+  z-index: 4;
+  object-fit: contain;
+  image-rendering: pixelated;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.22));
+  transition: transform 0.05s linear;
+}
+
+.gateSymbol {
+  position: absolute;
+  z-index: 3;
+  width: 24px;
+  height: 24px;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--color-text);
+  background: var(--color-bg);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.gateLabel,
+.endingLabel {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  z-index: 3;
+  padding: 2px 8px;
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+  border: 1px dashed var(--color-text);
+  background: var(--color-bg);
+}
+
+.gateResolved {
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+.gateActive {
+  border-style: solid;
+}
+
+.targeted {
+  outline: 3px solid var(--color-link);
+  outline-offset: 2px;
+}
+
+.endingfailure {
+  border-color: var(--color-hint);
+}
+
+.endingrecovery {
+  border-color: var(--color-link);
+}
+
+.endingstandard {
+  border-color: var(--color-text);
+}
+
+.endingmastery {
+  border-color: var(--color-success);
+}
+
+.endingsecret {
+  border-style: solid;
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+.endingLocked {
+  border-color: var(--color-muted);
+  color: var(--color-muted);
 }

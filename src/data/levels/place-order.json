@@ -1,93 +1,1396 @@
 {
+  "schemaVersion": 2,
+  "engine": "labyrinth",
   "id": "place-order",
-  "title": "Place Order Flow",
-  "scenario": "A user clicks 'Place Order' on an e-commerce checkout. Build the activity diagram that captures the full flow — including what happens when the cart is empty.",
-  "objective": "Walk the labyrinth and place the correct UML node at each step.",
+  "title": "Place Order Maze",
+  "scenario": "Walk from cart to order saved. Choose short, fix, side, or good paths at each room.",
+  "objective": "Move down through the rooms, pick clear doors, and use the bank-check challenge for the best order ending.",
   "toolbox": [
-    { "id": "A", "shape": "action", "label": "Action" },
-    { "id": "B", "shape": "decision", "label": "Decision" },
-    { "id": "C", "shape": "alert", "label": "Alert / End" }
-  ],
-  "labyrinth": { "width": 7, "height": 9, "start": [3, 0] },
-  "rootStepId": "s1",
-  "steps": [
     {
-      "id": "s1",
-      "kind": "place",
-      "shape": "start",
-      "expectedToolboxId": "_auto_start",
-      "nodeLabel": "User clicks 'Place Order'",
-      "labyrinthMove": "down",
-      "hint": "Every flow needs an Initial Node.",
-      "nextStepId": "s2"
-    },
-    {
-      "id": "s2",
-      "kind": "place",
+      "id": "A",
       "shape": "action",
-      "expectedToolboxId": "A",
-      "nodeLabel": "Retrieve Cart Items",
-      "labyrinthMove": "down",
-      "hint": "An Action represents a task the system performs.",
-      "nextStepId": "s3"
+      "label": "Action"
     },
     {
-      "id": "s3",
-      "kind": "decision",
+      "id": "B",
       "shape": "decision",
-      "nodeLabel": "Is Cart Empty?",
-      "labyrinthMove": "down",
-      "hint": "A Decision Node forks the flow based on a condition.",
-      "branches": [
-        { "guardLabel": "Yes", "labyrinthDir": "right", "nextStepId": "s4a" },
-        { "guardLabel": "No", "labyrinthDir": "left", "nextStepId": "s4b" }
+      "label": "Decision"
+    },
+    {
+      "id": "C",
+      "shape": "alert",
+      "label": "Alert / End"
+    }
+  ],
+  "labyrinth": {
+    "kind": "room-graph",
+    "width": 31,
+    "height": 35,
+    "start": [
+      15,
+      2
+    ],
+    "rows": [
+      "###############################",
+      "#############.....#############",
+      "#####......................####",
+      "#####.#######.....########.####",
+      "#####.#########.##########.####",
+      "##.......####.....#####......##",
+      "##................#####......##",
+      "##.......####.....#####......##",
+      "#####.#########............####",
+      "##.......####.....#####......##",
+      "##................#####......##",
+      "##.......####.....#####......##",
+      "#####.#########.###############",
+      "##.......####.....#####......##",
+      "##.......####................##",
+      "##.......####.....#####......##",
+      "#####...........###############",
+      "##.......####.....#############",
+      "##................#############",
+      "##.......##.#.....#############",
+      "#####.#####.###............####",
+      "##.......##.#.....#####......##",
+      "##................#####......##",
+      "##.......##.#.....#####......##",
+      "#####.#####.###............####",
+      "##.......##.#.....#####......##",
+      "##.......##..........##......##",
+      "##.......##.#.....##.##......##",
+      "###########.########.#####.####",
+      "###########.########.##......##",
+      "###########.########.##......##",
+      "########......###............##",
+      "########......###......########",
+      "########......###......########",
+      "###############################"
+    ],
+    "legend": {
+      "#": {
+        "kind": "wall",
+        "walkable": false,
+        "label": "Wall"
+      },
+      ".": {
+        "kind": "floor",
+        "walkable": true,
+        "label": "Room or path"
+      }
+    },
+    "gates": [
+      {
+        "id": "gate-cart-snapshot",
+        "symbol": "C",
+        "label": "Check cart",
+        "kind": "start",
+        "summary": "Start with the cart.",
+        "coord": [
+          15,
+          2
+        ]
+      },
+      {
+        "id": "gate-promo-cache",
+        "symbol": "D",
+        "label": "Check discount",
+        "kind": "side",
+        "summary": "Optional discount check.",
+        "coord": [
+          26,
+          6
+        ]
+      },
+      {
+        "id": "gate-inventory-reserve",
+        "symbol": "S",
+        "label": "Check stock",
+        "kind": "checkpoint",
+        "summary": "Make sure items are available.",
+        "coord": [
+          15,
+          6
+        ]
+      },
+      {
+        "id": "gate-address-verify",
+        "symbol": "A",
+        "label": "Check address",
+        "kind": "checkpoint",
+        "summary": "Make sure shipping details work.",
+        "coord": [
+          15,
+          10
+        ]
+      },
+      {
+        "id": "gate-address-repair",
+        "symbol": "F",
+        "label": "Fix address",
+        "kind": "recovery",
+        "summary": "Repair a bad address.",
+        "coord": [
+          5,
+          14
+        ]
+      },
+      {
+        "id": "gate-risk-scan",
+        "symbol": "R",
+        "label": "Check risk",
+        "kind": "checkpoint",
+        "summary": "Stop risky orders.",
+        "coord": [
+          15,
+          14
+        ]
+      },
+      {
+        "id": "gate-payment-auth",
+        "symbol": "P",
+        "label": "Pay",
+        "kind": "checkpoint",
+        "summary": "Ask the bank to approve payment.",
+        "coord": [
+          15,
+          18
+        ]
+      },
+      {
+        "id": "gate-retry-window",
+        "symbol": "T",
+        "label": "Try again",
+        "kind": "recovery",
+        "summary": "Retry a soft payment fail.",
+        "coord": [
+          26,
+          22
+        ]
+      },
+      {
+        "id": "gate-three-d-secure",
+        "symbol": "B",
+        "label": "Bank check",
+        "kind": "challenge",
+        "summary": "Optional challenge for the best route.",
+        "coord": [
+          15,
+          22
+        ]
+      },
+      {
+        "id": "gate-fulfillment-write",
+        "symbol": "O",
+        "label": "Save order",
+        "kind": "success",
+        "summary": "Save the order after checks pass.",
+        "coord": [
+          15,
+          26
+        ]
+      }
+    ],
+    "format": "room-graph",
+    "rooms": [
+      {
+        "id": "cart",
+        "label": "Cart start",
+        "x": 13,
+        "y": 1,
+        "width": 5,
+        "height": 3,
+        "kind": "start",
+        "gateId": "gate-cart-snapshot"
+      },
+      {
+        "id": "empty-cart",
+        "label": "Empty cart",
+        "x": 2,
+        "y": 5,
+        "width": 7,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "ending-empty-cart"
+      },
+      {
+        "id": "promo",
+        "label": "Discount side",
+        "x": 23,
+        "y": 5,
+        "width": 6,
+        "height": 3,
+        "kind": "side",
+        "gateId": "gate-promo-cache"
+      },
+      {
+        "id": "stock",
+        "label": "Check stock",
+        "x": 13,
+        "y": 5,
+        "width": 5,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "gate-inventory-reserve"
+      },
+      {
+        "id": "session-expired",
+        "label": "Session lost",
+        "x": 23,
+        "y": 9,
+        "width": 6,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "ending-session-expired"
+      },
+      {
+        "id": "stock-fail",
+        "label": "No stock",
+        "x": 2,
+        "y": 9,
+        "width": 7,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "ending-inventory-expired"
+      },
+      {
+        "id": "address",
+        "label": "Check address",
+        "x": 13,
+        "y": 9,
+        "width": 5,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "gate-address-verify"
+      },
+      {
+        "id": "fix-address",
+        "label": "Fix address",
+        "x": 2,
+        "y": 13,
+        "width": 7,
+        "height": 3,
+        "kind": "fix",
+        "gateId": "gate-address-repair"
+      },
+      {
+        "id": "risk",
+        "label": "Check risk",
+        "x": 13,
+        "y": 13,
+        "width": 5,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "gate-risk-scan"
+      },
+      {
+        "id": "manual-review",
+        "label": "Manual check",
+        "x": 23,
+        "y": 13,
+        "width": 6,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "ending-manual-review"
+      },
+      {
+        "id": "address-quit",
+        "label": "Address quit",
+        "x": 2,
+        "y": 17,
+        "width": 7,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "ending-address-abandoned"
+      },
+      {
+        "id": "payment",
+        "label": "Pay",
+        "x": 13,
+        "y": 17,
+        "width": 5,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "gate-payment-auth"
+      },
+      {
+        "id": "pay-fail",
+        "label": "Pay failed",
+        "x": 2,
+        "y": 21,
+        "width": 7,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "ending-payment-declined"
+      },
+      {
+        "id": "retry",
+        "label": "Try again",
+        "x": 23,
+        "y": 21,
+        "width": 6,
+        "height": 3,
+        "kind": "fix",
+        "gateId": "gate-retry-window"
+      },
+      {
+        "id": "bank-check",
+        "label": "Bank check",
+        "x": 13,
+        "y": 21,
+        "width": 5,
+        "height": 3,
+        "kind": "challenge",
+        "gateId": "gate-three-d-secure"
+      },
+      {
+        "id": "retry-timeout",
+        "label": "Retry failed",
+        "x": 23,
+        "y": 25,
+        "width": 6,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "ending-gateway-timeout"
+      },
+      {
+        "id": "bank-failed",
+        "label": "Bank failed",
+        "x": 2,
+        "y": 25,
+        "width": 7,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "ending-3ds-failed"
+      },
+      {
+        "id": "save-order",
+        "label": "Save order",
+        "x": 13,
+        "y": 25,
+        "width": 5,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "gate-fulfillment-write"
+      },
+      {
+        "id": "bank-quit",
+        "label": "Bank quit",
+        "x": 23,
+        "y": 29,
+        "width": 6,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "ending-3ds-abandoned"
+      },
+      {
+        "id": "order-standard",
+        "label": "Order saved",
+        "x": 8,
+        "y": 31,
+        "width": 6,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "ending-order-standard"
+      },
+      {
+        "id": "order-confirmed",
+        "label": "Best order",
+        "x": 17,
+        "y": 31,
+        "width": 6,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "ending-order-confirmed"
+      }
+    ],
+    "links": [
+      {
+        "id": "cart-empty",
+        "fromRoomId": "cart",
+        "toRoomId": "empty-cart",
+        "kind": "failure"
+      },
+      {
+        "id": "cart-stock",
+        "fromRoomId": "cart",
+        "toRoomId": "stock",
+        "kind": "best"
+      },
+      {
+        "id": "cart-promo",
+        "fromRoomId": "cart",
+        "toRoomId": "promo",
+        "kind": "side"
+      },
+      {
+        "id": "promo-stock",
+        "fromRoomId": "promo",
+        "toRoomId": "stock",
+        "kind": "side",
+        "points": [
+          [
+            26,
+            8
+          ],
+          [
+            15,
+            8
+          ]
+        ]
+      },
+      {
+        "id": "promo-expired",
+        "fromRoomId": "promo",
+        "toRoomId": "session-expired",
+        "kind": "failure"
+      },
+      {
+        "id": "stock-fail",
+        "fromRoomId": "stock",
+        "toRoomId": "stock-fail",
+        "kind": "failure"
+      },
+      {
+        "id": "stock-address",
+        "fromRoomId": "stock",
+        "toRoomId": "address",
+        "kind": "best"
+      },
+      {
+        "id": "address-fix",
+        "fromRoomId": "address",
+        "toRoomId": "fix-address",
+        "kind": "fix"
+      },
+      {
+        "id": "address-risk",
+        "fromRoomId": "address",
+        "toRoomId": "risk",
+        "kind": "best"
+      },
+      {
+        "id": "fix-risk",
+        "fromRoomId": "fix-address",
+        "toRoomId": "risk",
+        "kind": "fix",
+        "points": [
+          [
+            5,
+            16
+          ],
+          [
+            15,
+            16
+          ]
+        ]
+      },
+      {
+        "id": "fix-quit",
+        "fromRoomId": "fix-address",
+        "toRoomId": "address-quit",
+        "kind": "failure"
+      },
+      {
+        "id": "risk-review",
+        "fromRoomId": "risk",
+        "toRoomId": "manual-review",
+        "kind": "failure"
+      },
+      {
+        "id": "risk-payment",
+        "fromRoomId": "risk",
+        "toRoomId": "payment",
+        "kind": "best"
+      },
+      {
+        "id": "payment-fail",
+        "fromRoomId": "payment",
+        "toRoomId": "pay-fail",
+        "kind": "failure"
+      },
+      {
+        "id": "payment-retry",
+        "fromRoomId": "payment",
+        "toRoomId": "retry",
+        "kind": "fix",
+        "points": [
+          [
+            15,
+            20
+          ],
+          [
+            26,
+            20
+          ]
+        ]
+      },
+      {
+        "id": "payment-bank",
+        "fromRoomId": "payment",
+        "toRoomId": "bank-check",
+        "kind": "best"
+      },
+      {
+        "id": "payment-save",
+        "fromRoomId": "payment",
+        "toRoomId": "save-order",
+        "kind": "standard",
+        "points": [
+          [
+            11,
+            18
+          ],
+          [
+            11,
+            26
+          ],
+          [
+            15,
+            26
+          ]
+        ]
+      },
+      {
+        "id": "retry-bank",
+        "fromRoomId": "retry",
+        "toRoomId": "bank-check",
+        "kind": "fix",
+        "points": [
+          [
+            26,
+            24
+          ],
+          [
+            15,
+            24
+          ]
+        ]
+      },
+      {
+        "id": "retry-timeout",
+        "fromRoomId": "retry",
+        "toRoomId": "retry-timeout",
+        "kind": "failure"
+      },
+      {
+        "id": "bank-failed",
+        "fromRoomId": "bank-check",
+        "toRoomId": "bank-failed",
+        "kind": "failure"
+      },
+      {
+        "id": "bank-quit",
+        "fromRoomId": "bank-check",
+        "toRoomId": "bank-quit",
+        "kind": "failure",
+        "points": [
+          [
+            15,
+            24
+          ],
+          [
+            26,
+            24
+          ],
+          [
+            26,
+            30
+          ]
+        ]
+      },
+      {
+        "id": "bank-save",
+        "fromRoomId": "bank-check",
+        "toRoomId": "save-order",
+        "kind": "best"
+      },
+      {
+        "id": "save-standard",
+        "fromRoomId": "save-order",
+        "toRoomId": "order-standard",
+        "kind": "standard"
+      },
+      {
+        "id": "save-confirmed",
+        "fromRoomId": "save-order",
+        "toRoomId": "order-confirmed",
+        "kind": "best"
+      }
+    ],
+    "barriers": [
+      {
+        "id": "bar-address-payment-separator",
+        "cells": [
+          [
+            12,
+            18
+          ]
+        ]
+      },
+      {
+        "id": "bar-pay-bank-separator",
+        "cells": [
+          [
+            12,
+            22
+          ]
+        ]
+      }
+    ],
+    "map": [
+      "###############################",
+      "#############.....#############",
+      "#####......................####",
+      "#####.#######.....########.####",
+      "#####.#########.##########.####",
+      "##.......####.....#####......##",
+      "##................#####......##",
+      "##.......####.....#####......##",
+      "#####.#########............####",
+      "##.......####.....#####......##",
+      "##................#####......##",
+      "##.......####.....#####......##",
+      "#####.#########.###############",
+      "##.......####.....#####......##",
+      "##.......####................##",
+      "##.......####.....#####......##",
+      "#####...........###############",
+      "##.......####.....#############",
+      "##................#############",
+      "##.......##.#.....#############",
+      "#####.#####.###............####",
+      "##.......##.#.....#####......##",
+      "##................#####......##",
+      "##.......##.#.....#####......##",
+      "#####.#####.###............####",
+      "##.......##.#.....#####......##",
+      "##.......##..........##......##",
+      "##.......##.#.....##.##......##",
+      "###########.########.#####.####",
+      "###########.########.##......##",
+      "###########.########.##......##",
+      "########......###............##",
+      "########......###......########",
+      "########......###......########",
+      "###############################"
+    ],
+    "grid": [
+      "###############################",
+      "#############.....#############",
+      "#####......................####",
+      "#####.#######.....########.####",
+      "#####.#########.##########.####",
+      "##.......####.....#####......##",
+      "##................#####......##",
+      "##.......####.....#####......##",
+      "#####.#########............####",
+      "##.......####.....#####......##",
+      "##................#####......##",
+      "##.......####.....#####......##",
+      "#####.#########.###############",
+      "##.......####.....#####......##",
+      "##.......####................##",
+      "##.......####.....#####......##",
+      "#####...........###############",
+      "##.......####.....#############",
+      "##................#############",
+      "##.......##.#.....#############",
+      "#####.#####.###............####",
+      "##.......##.#.....#####......##",
+      "##................#####......##",
+      "##.......##.#.....#####......##",
+      "#####.#####.###............####",
+      "##.......##.#.....#####......##",
+      "##.......##..........##......##",
+      "##.......##.#.....##.##......##",
+      "###########.########.#####.####",
+      "###########.########.##......##",
+      "###########.########.##......##",
+      "########......###............##",
+      "########......###......########",
+      "########......###......########",
+      "###############################"
+    ],
+    "layout": [
+      "###############################",
+      "#############.....#############",
+      "#####......................####",
+      "#####.#######.....########.####",
+      "#####.#########.##########.####",
+      "##.......####.....#####......##",
+      "##................#####......##",
+      "##.......####.....#####......##",
+      "#####.#########............####",
+      "##.......####.....#####......##",
+      "##................#####......##",
+      "##.......####.....#####......##",
+      "#####.#########.###############",
+      "##.......####.....#####......##",
+      "##.......####................##",
+      "##.......####.....#####......##",
+      "#####...........###############",
+      "##.......####.....#############",
+      "##................#############",
+      "##.......##.#.....#############",
+      "#####.#####.###............####",
+      "##.......##.#.....#####......##",
+      "##................#####......##",
+      "##.......##.#.....#####......##",
+      "#####.#####.###............####",
+      "##.......##.#.....#####......##",
+      "##.......##..........##......##",
+      "##.......##.#.....##.##......##",
+      "###########.########.#####.####",
+      "###########.########.##......##",
+      "###########.########.##......##",
+      "########......###............##",
+      "########......###......########",
+      "########......###......########",
+      "###############################"
+    ]
+  },
+  "bestPath": {
+    "gateIds": [
+      "gate-cart-snapshot",
+      "gate-inventory-reserve",
+      "gate-address-verify",
+      "gate-risk-scan",
+      "gate-payment-auth",
+      "gate-three-d-secure",
+      "gate-fulfillment-write"
+    ],
+    "endingId": "ending-order-confirmed",
+    "summary": "Good checkout: cart, stock, address, risk, pay, bank check, save order."
+  },
+  "routes": [
+    {
+      "id": "route-cart-empty",
+      "fromGateId": "gate-cart-snapshot",
+      "choiceLabel": "Cart empty",
+      "routeType": "failure",
+      "toEndingId": "ending-empty-cart",
+      "summary": "Bad end: stop because there is nothing to buy."
+    },
+    {
+      "id": "route-cart-live",
+      "fromGateId": "gate-cart-snapshot",
+      "choiceLabel": "Go to stock",
+      "routeType": "best",
+      "toGateId": "gate-inventory-reserve",
+      "summary": "Good path: check stock next."
+    },
+    {
+      "id": "route-cart-promo-detour",
+      "fromGateId": "gate-cart-snapshot",
+      "choiceLabel": "Check discount",
+      "routeType": "optional",
+      "toGateId": "gate-promo-cache",
+      "summary": "Side path: check a discount first."
+    },
+    {
+      "id": "route-promo-cleared",
+      "fromGateId": "gate-promo-cache",
+      "choiceLabel": "Discount done",
+      "routeType": "optional",
+      "toGateId": "gate-inventory-reserve",
+      "summary": "Side path returns to stock."
+    },
+    {
+      "id": "route-promo-session-expired",
+      "fromGateId": "gate-promo-cache",
+      "choiceLabel": "Too slow",
+      "routeType": "failure",
+      "toEndingId": "ending-session-expired",
+      "summary": "Bad end: the session is lost."
+    },
+    {
+      "id": "route-reserve-failed",
+      "fromGateId": "gate-inventory-reserve",
+      "choiceLabel": "No stock",
+      "routeType": "failure",
+      "toEndingId": "ending-inventory-expired",
+      "summary": "Bad end: stop before payment."
+    },
+    {
+      "id": "route-reserve-succeeded",
+      "fromGateId": "gate-inventory-reserve",
+      "choiceLabel": "Stock OK",
+      "routeType": "best",
+      "toGateId": "gate-address-verify",
+      "summary": "Good path: check the address."
+    },
+    {
+      "id": "route-address-verified",
+      "fromGateId": "gate-address-verify",
+      "choiceLabel": "Address OK",
+      "routeType": "best",
+      "toGateId": "gate-risk-scan",
+      "summary": "Good path: check risk."
+    },
+    {
+      "id": "route-address-repair",
+      "fromGateId": "gate-address-verify",
+      "choiceLabel": "Fix address",
+      "routeType": "recovery",
+      "toGateId": "gate-address-repair",
+      "summary": "Fix path: repair the address."
+    },
+    {
+      "id": "route-address-repair-success",
+      "fromGateId": "gate-address-repair",
+      "choiceLabel": "Address fixed",
+      "routeType": "recovery",
+      "toGateId": "gate-risk-scan",
+      "summary": "Fix path rejoins risk check."
+    },
+    {
+      "id": "route-address-repair-abandoned",
+      "fromGateId": "gate-address-repair",
+      "choiceLabel": "Give up",
+      "routeType": "failure",
+      "toEndingId": "ending-address-abandoned",
+      "summary": "Bad end: address stays broken."
+    },
+    {
+      "id": "route-risk-cleared",
+      "fromGateId": "gate-risk-scan",
+      "choiceLabel": "Risk OK",
+      "routeType": "best",
+      "toGateId": "gate-payment-auth",
+      "summary": "Good path: pay next."
+    },
+    {
+      "id": "route-risk-review",
+      "fromGateId": "gate-risk-scan",
+      "choiceLabel": "Risk high",
+      "routeType": "failure",
+      "toEndingId": "ending-manual-review",
+      "summary": "Bad end: manual check needed."
+    },
+    {
+      "id": "route-auth-approved",
+      "fromGateId": "gate-payment-auth",
+      "choiceLabel": "Use bank check",
+      "routeType": "best",
+      "toGateId": "gate-three-d-secure",
+      "summary": "Good path: take the bank-check challenge."
+    },
+    {
+      "id": "route-auth-standard",
+      "fromGateId": "gate-payment-auth",
+      "choiceLabel": "Skip bank check",
+      "routeType": "standard",
+      "toGateId": "gate-fulfillment-write",
+      "summary": "Normal path: save the order without the bonus check."
+    },
+    {
+      "id": "route-auth-soft-decline",
+      "fromGateId": "gate-payment-auth",
+      "choiceLabel": "Try again",
+      "routeType": "recovery",
+      "toGateId": "gate-retry-window",
+      "summary": "Fix path: retry a soft payment fail."
+    },
+    {
+      "id": "route-auth-hard-decline",
+      "fromGateId": "gate-payment-auth",
+      "choiceLabel": "Payment failed",
+      "routeType": "failure",
+      "toEndingId": "ending-payment-declined",
+      "summary": "Bad end: payment fails."
+    },
+    {
+      "id": "route-retry-success",
+      "fromGateId": "gate-retry-window",
+      "choiceLabel": "Retry worked",
+      "routeType": "recovery",
+      "toGateId": "gate-three-d-secure",
+      "summary": "Fix path: continue to bank check."
+    },
+    {
+      "id": "route-retry-timeout",
+      "fromGateId": "gate-retry-window",
+      "choiceLabel": "Retry failed",
+      "routeType": "failure",
+      "toEndingId": "ending-gateway-timeout",
+      "summary": "Bad end: retry timed out."
+    },
+    {
+      "id": "route-3ds-passed",
+      "fromGateId": "gate-three-d-secure",
+      "choiceLabel": "Bank check passed",
+      "routeType": "best",
+      "requiresChallengeId": "challenge-3ds",
+      "challengeOutcomeId": "challenge-3ds-success",
+      "toGateId": "gate-fulfillment-write",
+      "summary": "Good path: save the order."
+    },
+    {
+      "id": "route-3ds-abandoned",
+      "fromGateId": "gate-three-d-secure",
+      "choiceLabel": "Bank check quit",
+      "routeType": "failure",
+      "requiresChallengeId": "challenge-3ds",
+      "challengeOutcomeId": "challenge-3ds-abandoned",
+      "toEndingId": "ending-3ds-abandoned",
+      "summary": "Bad end: bank check was left."
+    },
+    {
+      "id": "route-3ds-failed",
+      "fromGateId": "gate-three-d-secure",
+      "choiceLabel": "Bank check failed",
+      "routeType": "failure",
+      "requiresChallengeId": "challenge-3ds",
+      "challengeOutcomeId": "challenge-3ds-failed",
+      "toEndingId": "ending-3ds-failed",
+      "summary": "Bad end: bank check failed."
+    },
+    {
+      "id": "route-order-standard",
+      "fromGateId": "gate-fulfillment-write",
+      "choiceLabel": "Finish normal order",
+      "routeType": "standard",
+      "toEndingId": "ending-order-standard",
+      "summary": "Finish: save the order without the bank-check bonus."
+    },
+    {
+      "id": "route-order-written",
+      "fromGateId": "gate-fulfillment-write",
+      "choiceLabel": "Finish order",
+      "routeType": "success",
+      "toEndingId": "ending-order-confirmed",
+      "summary": "Finish: show the order result."
+    }
+  ],
+  "diagramChallenges": [
+    {
+      "id": "challenge-3ds",
+      "gateId": "gate-three-d-secure",
+      "title": "Bank Check",
+      "summary": "Build the bank-check branch: show the bank screen, choose the result, and continue only when it passes.",
+      "bestOutcomeId": "challenge-3ds-success",
+      "toolbox": [
+        {
+          "id": "A",
+          "shape": "action",
+          "label": "Action"
+        },
+        {
+          "id": "B",
+          "shape": "decision",
+          "label": "Decision"
+        },
+        {
+          "id": "C",
+          "shape": "alert",
+          "label": "Alert / End"
+        }
+      ],
+      "rootStepId": "tds-1",
+      "steps": [
+        {
+          "id": "tds-1",
+          "kind": "place",
+          "shape": "start",
+          "expectedToolboxId": "_auto_start",
+          "nodeLabel": "Start bank check",
+          "labyrinthMove": "down",
+          "hint": "Choose the simple activity-diagram piece for this step.",
+          "nextStepId": "tds-2"
+        },
+        {
+          "id": "tds-2",
+          "kind": "place",
+          "shape": "action",
+          "expectedToolboxId": "A",
+          "nodeLabel": "Show bank screen",
+          "labyrinthMove": "down",
+          "hint": "Choose the simple activity-diagram piece for this step.",
+          "nextStepId": "tds-3"
+        },
+        {
+          "id": "tds-3",
+          "kind": "decision",
+          "shape": "decision",
+          "nodeLabel": "Bank check result?",
+          "labyrinthMove": "down",
+          "hint": "Choose the simple activity-diagram piece for this step.",
+          "branches": [
+            {
+              "guardLabel": "Abandoned",
+              "labyrinthDir": "right",
+              "nextStepId": "tds-4a"
+            },
+            {
+              "guardLabel": "Failed",
+              "labyrinthDir": "left",
+              "nextStepId": "tds-4b"
+            },
+            {
+              "guardLabel": "Passed",
+              "labyrinthDir": "down",
+              "nextStepId": "tds-4c"
+            }
+          ]
+        },
+        {
+          "id": "tds-4a",
+          "kind": "place",
+          "shape": "alert",
+          "expectedToolboxId": "C",
+          "nodeLabel": "Show bank check quit",
+          "labyrinthMove": "right",
+          "hint": "Choose the simple activity-diagram piece for this step.",
+          "nextStepId": "tds-4a-end"
+        },
+        {
+          "id": "tds-4a-end",
+          "kind": "place",
+          "shape": "end",
+          "expectedToolboxId": "_auto_end",
+          "nodeLabel": "Bank check quit",
+          "labyrinthMove": "down",
+          "hint": "Choose the simple activity-diagram piece for this step."
+        },
+        {
+          "id": "tds-4b",
+          "kind": "place",
+          "shape": "alert",
+          "expectedToolboxId": "C",
+          "nodeLabel": "Show bank check failed",
+          "labyrinthMove": "left",
+          "hint": "Choose the simple activity-diagram piece for this step.",
+          "nextStepId": "tds-4b-end"
+        },
+        {
+          "id": "tds-4b-end",
+          "kind": "place",
+          "shape": "end",
+          "expectedToolboxId": "_auto_end",
+          "nodeLabel": "Bank check failed",
+          "labyrinthMove": "down",
+          "hint": "Choose the simple activity-diagram piece for this step."
+        },
+        {
+          "id": "tds-4c",
+          "kind": "place",
+          "shape": "action",
+          "expectedToolboxId": "A",
+          "nodeLabel": "Receive bank approval",
+          "labyrinthMove": "down",
+          "hint": "Choose the simple activity-diagram piece for this step.",
+          "nextStepId": "tds-5c"
+        },
+        {
+          "id": "tds-5c",
+          "kind": "place",
+          "shape": "action",
+          "expectedToolboxId": "A",
+          "nodeLabel": "Send result to checkout",
+          "labyrinthMove": "down",
+          "hint": "Choose the simple activity-diagram piece for this step.",
+          "nextStepId": "tds-6c"
+        },
+        {
+          "id": "tds-6c",
+          "kind": "place",
+          "shape": "end",
+          "expectedToolboxId": "_auto_end",
+          "nodeLabel": "Bank check passed",
+          "labyrinthMove": "down",
+          "hint": "Choose the simple activity-diagram piece for this step."
+        }
+      ],
+      "outcomes": [
+        {
+          "id": "challenge-3ds-success",
+          "label": "Bank check passed",
+          "routeType": "best",
+          "toGateId": "gate-fulfillment-write"
+        },
+        {
+          "id": "challenge-3ds-abandoned",
+          "label": "Bank check quit",
+          "routeType": "failure",
+          "toEndingId": "ending-3ds-abandoned"
+        },
+        {
+          "id": "challenge-3ds-failed",
+          "label": "Bank check failed",
+          "routeType": "failure",
+          "toEndingId": "ending-3ds-failed"
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "ending-empty-cart",
+      "symbol": "E",
+      "label": "Empty cart",
+      "kind": "failure",
+      "summary": "The cart has no item to buy.",
+      "outcome": "failure",
+      "initiallyUnlocked": true,
+      "unlocksEndingIds": [
+        "ending-inventory-expired",
+        "ending-session-expired"
+      ],
+      "coord": [
+        5,
+        6
       ]
     },
     {
-      "id": "s4a",
+      "id": "ending-session-expired",
+      "symbol": "X",
+      "label": "Session lost",
+      "kind": "failure",
+      "summary": "The side check took too long.",
+      "outcome": "failure",
+      "initiallyUnlocked": false,
+      "unlocksEndingIds": [],
+      "coord": [
+        26,
+        10
+      ]
+    },
+    {
+      "id": "ending-inventory-expired",
+      "symbol": "N",
+      "label": "No stock",
+      "kind": "failure",
+      "summary": "The item cannot be reserved.",
+      "outcome": "failure",
+      "initiallyUnlocked": false,
+      "unlocksEndingIds": [
+        "ending-address-abandoned"
+      ],
+      "coord": [
+        5,
+        10
+      ]
+    },
+    {
+      "id": "ending-address-abandoned",
+      "symbol": "Q",
+      "label": "Address quit",
+      "kind": "failure",
+      "summary": "The address was not fixed.",
+      "outcome": "failure",
+      "initiallyUnlocked": false,
+      "unlocksEndingIds": [
+        "ending-manual-review"
+      ],
+      "coord": [
+        5,
+        18
+      ]
+    },
+    {
+      "id": "ending-manual-review",
+      "symbol": "M",
+      "label": "Manual check",
+      "kind": "failure",
+      "summary": "Risk is too high for automatic checkout.",
+      "outcome": "failure",
+      "initiallyUnlocked": false,
+      "unlocksEndingIds": [],
+      "coord": [
+        26,
+        14
+      ]
+    },
+    {
+      "id": "ending-payment-declined",
+      "symbol": "L",
+      "label": "Pay failed",
+      "kind": "failure",
+      "summary": "The bank did not approve payment.",
+      "outcome": "failure",
+      "initiallyUnlocked": true,
+      "unlocksEndingIds": [
+        "ending-gateway-timeout",
+        "ending-3ds-failed"
+      ],
+      "coord": [
+        5,
+        22
+      ]
+    },
+    {
+      "id": "ending-gateway-timeout",
+      "symbol": "Y",
+      "label": "Retry failed",
+      "kind": "recovery",
+      "summary": "The payment retry did not finish.",
+      "outcome": "recovery",
+      "initiallyUnlocked": false,
+      "unlocksEndingIds": [
+        "ending-3ds-abandoned"
+      ],
+      "coord": [
+        26,
+        26
+      ]
+    },
+    {
+      "id": "ending-3ds-abandoned",
+      "symbol": "K",
+      "label": "Bank quit",
+      "kind": "failure",
+      "summary": "The bank check was left early.",
+      "outcome": "failure",
+      "initiallyUnlocked": false,
+      "unlocksEndingIds": [],
+      "coord": [
+        26,
+        30
+      ]
+    },
+    {
+      "id": "ending-3ds-failed",
+      "symbol": "Z",
+      "label": "Bank failed",
+      "kind": "failure",
+      "summary": "The bank check failed.",
+      "outcome": "failure",
+      "initiallyUnlocked": false,
+      "unlocksEndingIds": [],
+      "coord": [
+        5,
+        26
+      ]
+    },
+    {
+      "id": "ending-order-standard",
+      "symbol": "V",
+      "label": "Order saved",
+      "kind": "standard",
+      "summary": "The order is saved without the bank-check bonus.",
+      "outcome": "standard",
+      "initiallyUnlocked": true,
+      "unlocksEndingIds": [
+        "ending-order-confirmed"
+      ],
+      "coord": [
+        11,
+        32
+      ]
+    },
+    {
+      "id": "ending-order-confirmed",
+      "symbol": "W",
+      "label": "Best order",
+      "kind": "success",
+      "summary": "The order is saved after every good check.",
+      "outcome": "success",
+      "initiallyUnlocked": false,
+      "unlocksEndingIds": [],
+      "coord": [
+        20,
+        32
+      ]
+    }
+  ],
+  "rootStepId": "legacy-s1",
+  "steps": [
+    {
+      "id": "legacy-s1",
+      "kind": "place",
+      "shape": "start",
+      "expectedToolboxId": "_auto_start",
+      "nodeLabel": "Shopper submits checkout",
+      "labyrinthMove": "right",
+      "hint": "Every flow still begins with an Initial Node.",
+      "nextStepId": "legacy-s2"
+    },
+    {
+      "id": "legacy-s2",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Snapshot the cart",
+      "labyrinthMove": "right",
+      "hint": "Freezing the cart is an Action before any irreversible checks run.",
+      "nextStepId": "legacy-s3"
+    },
+    {
+      "id": "legacy-s3",
+      "kind": "decision",
+      "shape": "decision",
+      "nodeLabel": "Cart empty?",
+      "labyrinthMove": "down",
+      "hint": "The first checkout branch decides whether any order can continue at all.",
+      "branches": [
+        {
+          "guardLabel": "Yes",
+          "labyrinthDir": "down",
+          "nextStepId": "legacy-s4a"
+        },
+        {
+          "guardLabel": "No",
+          "labyrinthDir": "right",
+          "nextStepId": "legacy-s4b"
+        }
+      ]
+    },
+    {
+      "id": "legacy-s4a",
       "kind": "place",
       "shape": "alert",
       "expectedToolboxId": "C",
-      "nodeLabel": "Show 'Empty Cart' Alert",
+      "nodeLabel": "Show empty cart alert",
       "labyrinthMove": "right",
-      "hint": "An empty cart short-circuits to a terminal alert.",
-      "nextStepId": "s4aEnd"
+      "hint": "An empty basket ends checkout immediately.",
+      "nextStepId": "legacy-s4a-end"
     },
     {
-      "id": "s4aEnd",
+      "id": "legacy-s4a-end",
       "kind": "place",
       "shape": "end",
       "expectedToolboxId": "_auto_end",
       "nodeLabel": "End",
       "labyrinthMove": "down",
-      "hint": "Every alternate flow needs a Final Node."
+      "hint": "Failure branches still terminate with a Final Node."
     },
     {
-      "id": "s4b",
+      "id": "legacy-s4b",
       "kind": "place",
       "shape": "action",
       "expectedToolboxId": "A",
-      "nodeLabel": "Validate Payment Details",
-      "labyrinthMove": "left",
-      "hint": "Validate payment is another Action.",
-      "nextStepId": "s5"
+      "nodeLabel": "Reserve inventory hold",
+      "labyrinthMove": "right",
+      "hint": "A valid cart moves on to stock reservation.",
+      "nextStepId": "legacy-s5"
     },
     {
-      "id": "s5",
+      "id": "legacy-s5",
       "kind": "place",
       "shape": "action",
       "expectedToolboxId": "A",
-      "nodeLabel": "Send Order to Backend API",
+      "nodeLabel": "Complete bank check",
       "labyrinthMove": "down",
-      "hint": "Send order is the next Action.",
-      "nextStepId": "s6"
+      "hint": "The strongest path now includes bank approval.",
+      "nextStepId": "legacy-s6"
     },
     {
-      "id": "s6",
+      "id": "legacy-s6",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Capture payment and write order",
+      "labyrinthMove": "down",
+      "hint": "Once payment is secured, the order can be committed.",
+      "nextStepId": "legacy-s7"
+    },
+    {
+      "id": "legacy-s7",
       "kind": "place",
       "shape": "end",
       "expectedToolboxId": "_auto_end",
-      "nodeLabel": "Order Confirmed",
+      "nodeLabel": "Order confirmed",
       "labyrinthMove": "down",
       "hint": "The successful flow terminates in a Final Node."
     }

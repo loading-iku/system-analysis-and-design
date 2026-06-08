@@ -1,0 +1,91 @@
+.overlay,
+.panel,
+.canvas {
+  background-color: #efe6db;
+  background-image: var(--game-panel-background-image);
+  background-size: var(--game-panel-background-size);
+  background-position: var(--game-panel-background-position);
+  background-repeat: var(--game-panel-background-repeat);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 220;
+}
+
+.panel {
+  width: min(720px, 100%);
+  max-height: min(90vh, 820px);
+  overflow: auto;
+  border: 1.5px solid var(--color-text);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+
+.prompt {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.canvas {
+  min-height: 300px;
+  border: 1.5px solid var(--color-text);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nodeWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.feedback {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px dashed var(--color-text);
+  font-size: 13px;
+}
+
+.feedbackHint {
+  color: var(--color-hint);
+}
+
+.feedbackSuccess {
+  color: var(--color-success);
+}
+
+.dismiss {
+  font-size: 13px;
+  text-decoration: underline;
+}
+
+@media (max-width: 720px) {
+  .head {
+    flex-direction: column;
+  }
+}

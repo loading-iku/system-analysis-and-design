@@ -1,6 +1,17 @@
 [
   {
     "id": "place-order",
-    "title": "Place Order Flow"
+    "title": "Place Order Flow",
+    "concept": "Decisions & alternate flows"
+  },
+  {
+    "id": "user-login",
+    "title": "User Login",
+    "concept": "Guards & authentication"
+  },
+  {
+    "id": "user-registration",
+    "title": "User Registration",
+    "concept": "Capstone — full sign-up flow"
   }
 ]

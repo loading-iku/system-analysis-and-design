@@ -1,0 +1,108 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 360px;
+  height: 100%;
+  padding: 20px;
+  border: 1.5px solid var(--color-text);
+  border-radius: 18px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  text-decoration: none;
+  font-family: var(--font-mono-stack);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+/* The whole card is the link target when unlocked. */
+.unlocked {
+  cursor: pointer;
+}
+
+.unlocked:hover,
+.unlocked:focus-visible {
+  background: var(--color-text);
+  color: var(--color-bg);
+  outline: none;
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.index {
+  color: inherit;
+  opacity: 0.6;
+}
+
+.status {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.iconWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+/* Inset panel behind the padlock, echoing the darker tile in the design. */
+.lockPanel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+  border-radius: 14px;
+  background: var(--color-tile);
+}
+
+.title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.concept {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  opacity: 0.7;
+}
+
+.cta {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Locked cards are inert and visually recessed. */
+.locked {
+  cursor: not-allowed;
+  border-color: var(--color-muted);
+  color: var(--color-muted);
+  background: var(--color-panel);
+}
+
+.locked .title,
+.locked .status {
+  color: var(--color-muted);
+}
+
+.lockedNote {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 640px) {
+  .card {
+    min-height: 300px;
+  }
+}

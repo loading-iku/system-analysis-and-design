@@ -1,0 +1,14 @@
+.art {
+  margin: 0;
+  display: block;
+  width: max-content;
+  font-family: var(--font-mono-stack);
+  font-size: 16px;
+  line-height: 1;
+  white-space: pre;
+  color: var(--color-text);
+}
+
+.muted {
+  color: var(--color-muted);
+}

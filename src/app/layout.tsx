@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
-import { Roboto_Mono } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
+import "@fontsource/roboto-mono/400.css";
+import "@fontsource/roboto-mono/500.css";
+import "@fontsource/roboto-mono/700.css";
 import "./globals.css";
-
-const robotoMono = Roboto_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-});
 
 export const metadata: Metadata = {
   title: "Loading — Logic Path",
@@ -20,8 +17,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={robotoMono.variable}>
-      <body className="antialiased">{children}</body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className="antialiased">{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }

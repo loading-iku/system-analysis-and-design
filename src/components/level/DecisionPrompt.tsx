@@ -1,26 +1,26 @@
 "use client";
 
-import type { DecisionStep } from "@/lib/level/types";
+import type { DiagramDecisionStep } from "@/lib/level/types";
 import styles from "./DecisionPrompt.module.css";
 
 type Props = {
-  decision: DecisionStep;
+  decision: DiagramDecisionStep;
   onPick: (guardLabel: string) => void;
 };
 
 export function DecisionPrompt({ decision, onPick }: Props) {
   return (
-    <div className={styles.prompt} role="dialog" aria-label="Decision">
+    <div className={styles.prompt} role="group" aria-label="Decision">
       <span className={styles.title}>? {decision.nodeLabel}</span>
       <div className={styles.options}>
-        {decision.branches.map((branch, i) => (
+        {decision.branches.map((branch, index) => (
           <button
             key={branch.guardLabel}
             type="button"
             className={styles.option}
             onClick={() => onPick(branch.guardLabel)}
           >
-            [{i + 1}] {branch.guardLabel}
+            [{index + 1}] {branch.guardLabel}
           </button>
         ))}
       </div>

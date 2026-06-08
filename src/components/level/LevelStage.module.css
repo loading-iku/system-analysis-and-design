@@ -1,34 +1,114 @@
+.topline,
+.instructions,
+.directionButton {
+  background-color: #efe6db;
+  background-image: var(--game-panel-background-image);
+  background-size: var(--game-panel-background-size);
+  background-position: var(--game-panel-background-position);
+  background-repeat: var(--game-panel-background-repeat);
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border: 1.5px solid var(--color-text);
+}
+
+.titleRail {
+  font-size: 20px;
+}
+
+.liveStats {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 .stage {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
   gap: 18px;
   align-items: stretch;
 }
 
-@media (max-width: 880px) {
+.progressColumn,
+.playColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+.progressColumn {
+  align-self: start;
+}
+
+.mazeWrap {
+  position: relative;
+}
+
+.objective {
+  margin: 0;
+  padding: 0 2px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.instructions {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--color-text);
+  font-size: 14px;
+}
+
+.controls {
+  display: none;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.directionButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 10px;
+  border: 1.5px solid var(--color-text);
+}
+
+.directionButton small {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 1040px) {
   .stage {
     grid-template-columns: 1fr;
   }
+
+  .progressColumn {
+    order: 2;
+  }
 }
 
-.column {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
+@media (max-width: 820px) {
+  .topline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-.scenario {
-  margin: 0;
-  padding: 12px 16px;
-  background: var(--color-panel);
-  color: var(--color-text);
-  font-family: var(--font-mono-stack);
-  font-size: 13px;
-  line-height: 1.45;
-}
-
-.replay {
-  display: inline-flex;
-  align-items: center;
-  gap: 0;
+  .controls {
+    display: grid;
+  }
 }

@@ -3,13 +3,16 @@ import styles from "./CliPage.module.css";
 
 type Props = {
   children: ReactNode;
+  wide?: boolean;
 };
 
 /** Centers a CliShell on the page with the standard terminal padding. */
-export function CliPage({ children }: Props) {
+export function CliPage({ children, wide = false }: Props) {
   return (
     <div className={styles.page}>
-      <main className={styles.main}>{children}</main>
+      <main className={`${styles.main} ${wide ? styles.wide : ""}`}>
+        {children}
+      </main>
     </div>
   );
 }

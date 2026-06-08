@@ -1,0 +1,1908 @@
+{
+  "schemaVersion": 2,
+  "engine": "labyrinth",
+  "id": "user-registration",
+  "title": "User Registration Maze",
+  "scenario": "Walk from signup form to account ready. Each room checks one simple thing.",
+  "objective": "Move downward through form, email, duplicate, password, and verification rooms.",
+  "diagramType": "activity",
+  "diagramFit": "Activity diagrams fit because signup branches into good, fix, and bad endings.",
+  "bestEndingId": "verified-account",
+  "learningGoals": [
+    "Check simple input first.",
+    "Send duplicate users to login or recovery.",
+    "Use email verification before account ready."
+  ],
+  "routes": [
+    {
+      "id": "missing-info-route",
+      "label": "Missing info",
+      "kind": "failure",
+      "gateIds": [
+        "gate-a"
+      ],
+      "endingId": "missing-fields",
+      "summary": "Bad end: required info is missing."
+    },
+    {
+      "id": "bad-email-route",
+      "label": "Bad email",
+      "kind": "failure",
+      "gateIds": [
+        "gate-a",
+        "gate-b"
+      ],
+      "endingId": "invalid-email",
+      "summary": "Bad end: email format fails."
+    },
+    {
+      "id": "duplicate-login-route",
+      "label": "Use login",
+      "kind": "failure",
+      "gateIds": [
+        "gate-a",
+        "gate-b",
+        "gate-c",
+        "gate-d"
+      ],
+      "endingId": "use-login",
+      "summary": "Bad end: existing users should log in."
+    },
+    {
+      "id": "duplicate-help-exit-route",
+      "label": "Exit help",
+      "kind": "recovery",
+      "gateIds": [
+        "gate-a",
+        "gate-b",
+        "gate-c",
+        "gate-d",
+        "gate-e"
+      ],
+      "endingId": "exit-unverified",
+      "summary": "Fix path: user leaves email help."
+    },
+    {
+      "id": "recovery-bounce-route",
+      "label": "Email bounce",
+      "kind": "failure",
+      "gateIds": [
+        "gate-a",
+        "gate-b",
+        "gate-c",
+        "gate-d",
+        "gate-e",
+        "gate-f"
+      ],
+      "endingId": "bounce-recovery-email",
+      "summary": "Bad end: help email bounces."
+    },
+    {
+      "id": "recovery-pending-route",
+      "label": "Pending resend",
+      "kind": "recovery",
+      "gateIds": [
+        "gate-a",
+        "gate-b",
+        "gate-c",
+        "gate-d",
+        "gate-e",
+        "gate-f"
+      ],
+      "endingId": "pending-after-resend",
+      "summary": "Fix path: email is resent and waits."
+    },
+    {
+      "id": "weak-password-route",
+      "label": "Weak password",
+      "kind": "failure",
+      "gateIds": [
+        "gate-a",
+        "gate-b",
+        "gate-c",
+        "gate-g",
+        "gate-h"
+      ],
+      "endingId": "weak-password-quit",
+      "summary": "Bad end: weak password is not fixed."
+    },
+    {
+      "id": "pending-route",
+      "label": "Pending account",
+      "kind": "pending",
+      "gateIds": [
+        "gate-a",
+        "gate-b",
+        "gate-c",
+        "gate-g"
+      ],
+      "endingId": "pending-first-verification",
+      "summary": "Normal path: account waits for email."
+    },
+    {
+      "id": "retry-pending-route",
+      "label": "Retry pending",
+      "kind": "recovery",
+      "gateIds": [
+        "gate-a",
+        "gate-b",
+        "gate-c",
+        "gate-g",
+        "gate-h",
+        "gate-k"
+      ],
+      "endingId": "pending-after-password-retry",
+      "summary": "Fix path: password is better, email still waits."
+    },
+    {
+      "id": "retry-ready-route",
+      "label": "Retry ready",
+      "kind": "recovery",
+      "gateIds": [
+        "gate-a",
+        "gate-b",
+        "gate-c",
+        "gate-g",
+        "gate-h",
+        "gate-k"
+      ],
+      "endingId": "verified-after-password-retry",
+      "summary": "Fix path: retry reaches account ready."
+    },
+    {
+      "id": "best-route",
+      "label": "Account ready",
+      "kind": "best",
+      "gateIds": [
+        "gate-a",
+        "gate-b",
+        "gate-c",
+        "gate-g",
+        "gate-i"
+      ],
+      "endingId": "verified-account",
+      "summary": "Good path: clean signup and verified email."
+    },
+    {
+      "id": "bonus-route",
+      "label": "Bonus ready",
+      "kind": "bonus",
+      "gateIds": [
+        "gate-a",
+        "gate-b",
+        "gate-c",
+        "gate-g",
+        "gate-i",
+        "gate-j"
+      ],
+      "endingId": "verified-bonus",
+      "summary": "Side path: finish welcome steps after verifying."
+    }
+  ],
+  "toolbox": [
+    {
+      "id": "A",
+      "shape": "action",
+      "label": "Action"
+    },
+    {
+      "id": "B",
+      "shape": "decision",
+      "label": "Decision Gate"
+    },
+    {
+      "id": "C",
+      "shape": "alert",
+      "label": "Alert / End"
+    }
+  ],
+  "labyrinth": {
+    "width": 37,
+    "height": 37,
+    "start": [
+      15,
+      2
+    ],
+    "predefined": true,
+    "layoutLegend": {
+      "#": "wall",
+      ".": "corridor",
+      "S": "start"
+    },
+    "layout": [
+      "#####################################",
+      "#############.....###################",
+      "######............###################",
+      "######.######.....###################",
+      "######.########.#####################",
+      "##........###.....######.......######",
+      "##........###..................######",
+      "##........###.....######.......######",
+      "###############.#####################",
+      "##........###.....###################",
+      "##................###################",
+      "##........###.....###################",
+      "######.########.#####################",
+      "##........###.....######.......######",
+      "##........###..................######",
+      "##........###.....######.......######",
+      "######.######.#.###########.#########",
+      "##........###.....######.......######",
+      "##........###..................######",
+      "##........###.....######.......######",
+      "######.######.##.##########.#########",
+      "##...............#######.......######",
+      "##...............#######.......######",
+      "##...............#######.......######",
+      "######.########..##########.#########",
+      "##........#####..#######.......######",
+      "##........#####..#######.........####",
+      "##........#####..#######.......#.####",
+      "######.########..########.#.####.####",
+      "##........#........###......#......##",
+      "##........#........###......#......##",
+      "##........#........###......#......##",
+      "################.##########.#########",
+      "#############.......####.......######",
+      "#############.......####.......######",
+      "#############.......####.......######",
+      "#####################################"
+    ],
+    "gates": [
+      {
+        "id": "gate-a",
+        "symbol": "F",
+        "label": "Start form",
+        "kind": "start",
+        "summary": "Check that required fields are filled.",
+        "coord": [
+          15,
+          2
+        ]
+      },
+      {
+        "id": "gate-b",
+        "symbol": "E",
+        "label": "Check email",
+        "kind": "checkpoint",
+        "summary": "Check the email format.",
+        "coord": [
+          15,
+          6
+        ]
+      },
+      {
+        "id": "gate-c",
+        "symbol": "D",
+        "label": "Find duplicate",
+        "kind": "checkpoint",
+        "summary": "See if this email already exists.",
+        "coord": [
+          15,
+          10
+        ]
+      },
+      {
+        "id": "gate-d",
+        "symbol": "L",
+        "label": "Use login?",
+        "kind": "checkpoint",
+        "summary": "A real account should log in instead.",
+        "coord": [
+          6,
+          10
+        ]
+      },
+      {
+        "id": "gate-e",
+        "symbol": "H",
+        "label": "Email help",
+        "kind": "recovery",
+        "summary": "Help an unverified account.",
+        "coord": [
+          6,
+          18
+        ]
+      },
+      {
+        "id": "gate-f",
+        "symbol": "S",
+        "label": "Send email",
+        "kind": "checkpoint",
+        "summary": "Send or resend a verification email.",
+        "coord": [
+          6,
+          22
+        ]
+      },
+      {
+        "id": "gate-g",
+        "symbol": "P",
+        "label": "Check password",
+        "kind": "checkpoint",
+        "summary": "Check password strength.",
+        "coord": [
+          15,
+          14
+        ]
+      },
+      {
+        "id": "gate-h",
+        "symbol": "T",
+        "label": "Try password",
+        "kind": "recovery",
+        "summary": "Let the user make a stronger password.",
+        "coord": [
+          27,
+          14
+        ]
+      },
+      {
+        "id": "gate-i",
+        "symbol": "V",
+        "label": "Verify email",
+        "kind": "challenge",
+        "summary": "Open the email check challenge.",
+        "coord": [
+          15,
+          18
+        ]
+      },
+      {
+        "id": "gate-j",
+        "symbol": "W",
+        "label": "Welcome steps",
+        "kind": "side",
+        "summary": "Optional welcome setup.",
+        "coord": [
+          27,
+          22
+        ]
+      },
+      {
+        "id": "gate-k",
+        "symbol": "R",
+        "label": "Retry email",
+        "kind": "recovery",
+        "summary": "Try the verification email again.",
+        "coord": [
+          27,
+          26
+        ]
+      }
+    ],
+    "endings": [
+      {
+        "id": "missing-fields",
+        "symbol": "M",
+        "label": "Missing info",
+        "kind": "failure",
+        "summary": "The form is missing required info.",
+        "outcome": "failure",
+        "initiallyUnlocked": true,
+        "unlocksEndingIds": [
+          "invalid-email"
+        ],
+        "coord": [
+          6,
+          6
+        ]
+      },
+      {
+        "id": "invalid-email",
+        "symbol": "B",
+        "label": "Bad email",
+        "kind": "failure",
+        "summary": "The email format is not valid.",
+        "outcome": "failure",
+        "initiallyUnlocked": false,
+        "unlocksEndingIds": [
+          "use-login"
+        ],
+        "coord": [
+          27,
+          6
+        ]
+      },
+      {
+        "id": "use-login",
+        "symbol": "L",
+        "label": "Login instead",
+        "kind": "failure",
+        "summary": "This email already has an account.",
+        "outcome": "failure",
+        "initiallyUnlocked": false,
+        "unlocksEndingIds": [
+          "exit-unverified"
+        ],
+        "coord": [
+          6,
+          14
+        ]
+      },
+      {
+        "id": "exit-unverified",
+        "symbol": "X",
+        "label": "Exit help",
+        "kind": "recovery",
+        "summary": "The user leaves the email-help path.",
+        "outcome": "recovery",
+        "initiallyUnlocked": false,
+        "unlocksEndingIds": [
+          "bounce-recovery-email",
+          "pending-after-resend"
+        ],
+        "coord": [
+          6,
+          26
+        ]
+      },
+      {
+        "id": "bounce-recovery-email",
+        "symbol": "O",
+        "label": "Email bounce",
+        "kind": "failure",
+        "summary": "The help email could not be delivered.",
+        "outcome": "failure",
+        "initiallyUnlocked": false,
+        "unlocksEndingIds": [],
+        "coord": [
+          6,
+          30
+        ]
+      },
+      {
+        "id": "pending-after-resend",
+        "symbol": "N",
+        "label": "Pending resend",
+        "kind": "recovery",
+        "summary": "A new email is sent, but the account waits.",
+        "outcome": "recovery",
+        "initiallyUnlocked": false,
+        "unlocksEndingIds": [],
+        "coord": [
+          15,
+          30
+        ]
+      },
+      {
+        "id": "weak-password-quit",
+        "symbol": "Q",
+        "label": "Weak quit",
+        "kind": "failure",
+        "summary": "The user quits after password advice.",
+        "outcome": "failure",
+        "initiallyUnlocked": false,
+        "unlocksEndingIds": [],
+        "coord": [
+          27,
+          18
+        ]
+      },
+      {
+        "id": "pending-first-verification",
+        "symbol": "I",
+        "label": "Still pending",
+        "kind": "standard",
+        "summary": "The account is created but waits for email.",
+        "outcome": "standard",
+        "initiallyUnlocked": true,
+        "unlocksEndingIds": [
+          "weak-password-quit",
+          "pending-after-password-retry"
+        ],
+        "coord": [
+          13,
+          22
+        ]
+      },
+      {
+        "id": "verified-account",
+        "symbol": "A",
+        "label": "Account ready",
+        "kind": "best",
+        "summary": "The account is verified and ready.",
+        "outcome": "best",
+        "initiallyUnlocked": true,
+        "unlocksEndingIds": [
+          "verified-bonus"
+        ],
+        "coord": [
+          16,
+          34
+        ]
+      },
+      {
+        "id": "verified-bonus",
+        "symbol": "Z",
+        "label": "Bonus ready",
+        "kind": "bonus",
+        "summary": "The verified user also finished welcome steps.",
+        "outcome": "bonus",
+        "initiallyUnlocked": false,
+        "unlocksEndingIds": [],
+        "coord": [
+          27,
+          34
+        ]
+      },
+      {
+        "id": "pending-after-password-retry",
+        "symbol": "Y",
+        "label": "Retry pending",
+        "kind": "recovery",
+        "summary": "Password was fixed, but email still waits.",
+        "outcome": "recovery",
+        "initiallyUnlocked": false,
+        "unlocksEndingIds": [
+          "verified-after-password-retry"
+        ],
+        "coord": [
+          25,
+          30
+        ]
+      },
+      {
+        "id": "verified-after-password-retry",
+        "symbol": "R",
+        "label": "Retry ready",
+        "kind": "recovery",
+        "summary": "The retry path reaches a verified account.",
+        "outcome": "recovery",
+        "initiallyUnlocked": false,
+        "unlocksEndingIds": [],
+        "coord": [
+          32,
+          30
+        ]
+      }
+    ],
+    "kind": "room-graph",
+    "format": "room-graph",
+    "rooms": [
+      {
+        "id": "form",
+        "label": "Start form",
+        "x": 13,
+        "y": 1,
+        "width": 5,
+        "height": 3,
+        "kind": "start",
+        "gateId": "gate-a"
+      },
+      {
+        "id": "missing",
+        "label": "Missing info",
+        "x": 2,
+        "y": 5,
+        "width": 8,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "missing-fields"
+      },
+      {
+        "id": "email",
+        "label": "Check email",
+        "x": 13,
+        "y": 5,
+        "width": 5,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "gate-b"
+      },
+      {
+        "id": "bad-email",
+        "label": "Bad email",
+        "x": 24,
+        "y": 5,
+        "width": 7,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "invalid-email"
+      },
+      {
+        "id": "duplicate",
+        "label": "Find duplicate",
+        "x": 13,
+        "y": 9,
+        "width": 5,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "gate-c"
+      },
+      {
+        "id": "use-login-gate",
+        "label": "Use login?",
+        "x": 2,
+        "y": 9,
+        "width": 8,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "gate-d"
+      },
+      {
+        "id": "password",
+        "label": "Check password",
+        "x": 13,
+        "y": 13,
+        "width": 5,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "gate-g"
+      },
+      {
+        "id": "use-login",
+        "label": "Login instead",
+        "x": 2,
+        "y": 13,
+        "width": 8,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "use-login"
+      },
+      {
+        "id": "retry-password",
+        "label": "Try password",
+        "x": 24,
+        "y": 13,
+        "width": 7,
+        "height": 3,
+        "kind": "fix",
+        "gateId": "gate-h"
+      },
+      {
+        "id": "email-help",
+        "label": "Email help",
+        "x": 2,
+        "y": 17,
+        "width": 8,
+        "height": 3,
+        "kind": "fix",
+        "gateId": "gate-e"
+      },
+      {
+        "id": "verify",
+        "label": "Verify email",
+        "x": 13,
+        "y": 17,
+        "width": 5,
+        "height": 3,
+        "kind": "challenge",
+        "gateId": "gate-i"
+      },
+      {
+        "id": "weak-quit",
+        "label": "Weak quit",
+        "x": 24,
+        "y": 17,
+        "width": 7,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "weak-password-quit"
+      },
+      {
+        "id": "send-email",
+        "label": "Send email",
+        "x": 2,
+        "y": 21,
+        "width": 8,
+        "height": 3,
+        "kind": "gate",
+        "gateId": "gate-f"
+      },
+      {
+        "id": "pending-first",
+        "label": "Still pending",
+        "x": 10,
+        "y": 21,
+        "width": 7,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "pending-first-verification"
+      },
+      {
+        "id": "bonus",
+        "label": "Welcome steps",
+        "x": 24,
+        "y": 21,
+        "width": 7,
+        "height": 3,
+        "kind": "side",
+        "gateId": "gate-j"
+      },
+      {
+        "id": "exit-unverified",
+        "label": "Exit help",
+        "x": 2,
+        "y": 25,
+        "width": 8,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "exit-unverified"
+      },
+      {
+        "id": "retry-verify",
+        "label": "Retry email",
+        "x": 24,
+        "y": 25,
+        "width": 7,
+        "height": 3,
+        "kind": "fix",
+        "gateId": "gate-k"
+      },
+      {
+        "id": "bounce",
+        "label": "Email bounce",
+        "x": 2,
+        "y": 29,
+        "width": 8,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "bounce-recovery-email"
+      },
+      {
+        "id": "pending-resend",
+        "label": "Pending resend",
+        "x": 11,
+        "y": 29,
+        "width": 8,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "pending-after-resend"
+      },
+      {
+        "id": "verified",
+        "label": "Account ready",
+        "x": 13,
+        "y": 33,
+        "width": 7,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "verified-account"
+      },
+      {
+        "id": "retry-pending",
+        "label": "Retry pending",
+        "x": 22,
+        "y": 29,
+        "width": 6,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "pending-after-password-retry"
+      },
+      {
+        "id": "retry-verified",
+        "label": "Retry ready",
+        "x": 29,
+        "y": 29,
+        "width": 6,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "verified-after-password-retry"
+      },
+      {
+        "id": "verified-bonus",
+        "label": "Bonus ready",
+        "x": 24,
+        "y": 33,
+        "width": 7,
+        "height": 3,
+        "kind": "ending",
+        "endingId": "verified-bonus"
+      }
+    ],
+    "links": [
+      {
+        "id": "form-missing",
+        "fromRoomId": "form",
+        "toRoomId": "missing",
+        "kind": "failure"
+      },
+      {
+        "id": "form-email",
+        "fromRoomId": "form",
+        "toRoomId": "email",
+        "kind": "best"
+      },
+      {
+        "id": "email-bad",
+        "fromRoomId": "email",
+        "toRoomId": "bad-email",
+        "kind": "failure"
+      },
+      {
+        "id": "email-duplicate",
+        "fromRoomId": "email",
+        "toRoomId": "duplicate",
+        "kind": "best"
+      },
+      {
+        "id": "duplicate-login",
+        "fromRoomId": "duplicate",
+        "toRoomId": "use-login-gate",
+        "kind": "failure"
+      },
+      {
+        "id": "duplicate-password",
+        "fromRoomId": "duplicate",
+        "toRoomId": "password",
+        "kind": "best"
+      },
+      {
+        "id": "use-login-end",
+        "fromRoomId": "use-login-gate",
+        "toRoomId": "use-login",
+        "kind": "failure"
+      },
+      {
+        "id": "use-login-help",
+        "fromRoomId": "use-login-gate",
+        "toRoomId": "email-help",
+        "kind": "fix"
+      },
+      {
+        "id": "email-help-exit",
+        "fromRoomId": "email-help",
+        "toRoomId": "exit-unverified",
+        "kind": "failure"
+      },
+      {
+        "id": "email-help-send",
+        "fromRoomId": "email-help",
+        "toRoomId": "send-email",
+        "kind": "fix"
+      },
+      {
+        "id": "send-bounce",
+        "fromRoomId": "send-email",
+        "toRoomId": "bounce",
+        "kind": "failure"
+      },
+      {
+        "id": "send-pending",
+        "fromRoomId": "send-email",
+        "toRoomId": "pending-resend",
+        "kind": "fix"
+      },
+      {
+        "id": "password-retry",
+        "fromRoomId": "password",
+        "toRoomId": "retry-password",
+        "kind": "fix"
+      },
+      {
+        "id": "password-verify",
+        "fromRoomId": "password",
+        "toRoomId": "verify",
+        "kind": "best"
+      },
+      {
+        "id": "password-pending",
+        "fromRoomId": "password",
+        "toRoomId": "pending-first",
+        "kind": "standard"
+      },
+      {
+        "id": "retry-quit",
+        "fromRoomId": "retry-password",
+        "toRoomId": "weak-quit",
+        "kind": "failure"
+      },
+      {
+        "id": "retry-email",
+        "fromRoomId": "retry-password",
+        "toRoomId": "retry-verify",
+        "kind": "fix"
+      },
+      {
+        "id": "verify-ready",
+        "fromRoomId": "verify",
+        "toRoomId": "verified",
+        "kind": "best"
+      },
+      {
+        "id": "verify-bonus",
+        "fromRoomId": "verify",
+        "toRoomId": "bonus",
+        "kind": "side"
+      },
+      {
+        "id": "bonus-ready",
+        "fromRoomId": "bonus",
+        "toRoomId": "verified-bonus",
+        "kind": "side"
+      },
+      {
+        "id": "retry-pending",
+        "fromRoomId": "retry-verify",
+        "toRoomId": "retry-pending",
+        "kind": "fix"
+      },
+      {
+        "id": "retry-ready",
+        "fromRoomId": "retry-verify",
+        "toRoomId": "retry-verified",
+        "kind": "fix"
+      }
+    ],
+    "barriers": [
+      {
+        "id": "bar-verify-weak-separator",
+        "cells": [
+          [
+            23,
+            18
+          ]
+        ]
+      },
+      {
+        "id": "bar-send-pending-separator",
+        "cells": [
+          [
+            10,
+            21
+          ],
+          [
+            10,
+            22
+          ],
+          [
+            10,
+            23
+          ]
+        ]
+      }
+    ],
+    "rows": [
+      "#####################################",
+      "#############.....###################",
+      "######............###################",
+      "######.######.....###################",
+      "######.########.#####################",
+      "##........###.....######.......######",
+      "##........###..................######",
+      "##........###.....######.......######",
+      "###############.#####################",
+      "##........###.....###################",
+      "##................###################",
+      "##........###.....###################",
+      "######.########.#####################",
+      "##........###.....######.......######",
+      "##........###..................######",
+      "##........###.....######.......######",
+      "######.######.#.###########.#########",
+      "##........###.....######.......######",
+      "##........###..................######",
+      "##........###.....######.......######",
+      "######.######.##.##########.#########",
+      "##...............#######.......######",
+      "##...............#######.......######",
+      "##...............#######.......######",
+      "######.########..##########.#########",
+      "##........#####..#######.......######",
+      "##........#####..#######.........####",
+      "##........#####..#######.......#.####",
+      "######.########..########.#.####.####",
+      "##........#........###......#......##",
+      "##........#........###......#......##",
+      "##........#........###......#......##",
+      "################.##########.#########",
+      "#############.......####.......######",
+      "#############.......####.......######",
+      "#############.......####.......######",
+      "#####################################"
+    ],
+    "map": [
+      "#####################################",
+      "#############.....###################",
+      "######............###################",
+      "######.######.....###################",
+      "######.########.#####################",
+      "##........###.....######.......######",
+      "##........###..................######",
+      "##........###.....######.......######",
+      "###############.#####################",
+      "##........###.....###################",
+      "##................###################",
+      "##........###.....###################",
+      "######.########.#####################",
+      "##........###.....######.......######",
+      "##........###..................######",
+      "##........###.....######.......######",
+      "######.######.#.###########.#########",
+      "##........###.....######.......######",
+      "##........###..................######",
+      "##........###.....######.......######",
+      "######.######.##.##########.#########",
+      "##...............#######.......######",
+      "##...............#######.......######",
+      "##...............#######.......######",
+      "######.########..##########.#########",
+      "##........#####..#######.......######",
+      "##........#####..#######.........####",
+      "##........#####..#######.......#.####",
+      "######.########..########.#.####.####",
+      "##........#........###......#......##",
+      "##........#........###......#......##",
+      "##........#........###......#......##",
+      "################.##########.#########",
+      "#############.......####.......######",
+      "#############.......####.......######",
+      "#############.......####.......######",
+      "#####################################"
+    ],
+    "grid": [
+      "#####################################",
+      "#############.....###################",
+      "######............###################",
+      "######.######.....###################",
+      "######.########.#####################",
+      "##........###.....######.......######",
+      "##........###..................######",
+      "##........###.....######.......######",
+      "###############.#####################",
+      "##........###.....###################",
+      "##................###################",
+      "##........###.....###################",
+      "######.########.#####################",
+      "##........###.....######.......######",
+      "##........###..................######",
+      "##........###.....######.......######",
+      "######.######.#.###########.#########",
+      "##........###.....######.......######",
+      "##........###..................######",
+      "##........###.....######.......######",
+      "######.######.##.##########.#########",
+      "##...............#######.......######",
+      "##...............#######.......######",
+      "##...............#######.......######",
+      "######.########..##########.#########",
+      "##........#####..#######.......######",
+      "##........#####..#######.........####",
+      "##........#####..#######.......#.####",
+      "######.########..########.#.####.####",
+      "##........#........###......#......##",
+      "##........#........###......#......##",
+      "##........#........###......#......##",
+      "################.##########.#########",
+      "#############.......####.......######",
+      "#############.......####.......######",
+      "#############.......####.......######",
+      "#####################################"
+    ],
+    "legend": {
+      "#": {
+        "kind": "wall",
+        "walkable": false,
+        "label": "Wall"
+      },
+      ".": {
+        "kind": "floor",
+        "walkable": true,
+        "label": "Room or path"
+      }
+    }
+  },
+  "rootStepId": "start",
+  "steps": [
+    {
+      "id": "start",
+      "kind": "place",
+      "shape": "start",
+      "expectedToolboxId": "_auto_start",
+      "nodeLabel": "User sends form",
+      "coord": [
+        10,
+        0
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "reviewPacket"
+    },
+    {
+      "id": "reviewPacket",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Review registration packet",
+      "coord": [
+        10,
+        1
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "gateAIntake"
+    },
+    {
+      "id": "gateAIntake",
+      "kind": "decision",
+      "shape": "decision",
+      "nodeLabel": "Gate A // Form complete?",
+      "gateId": "gate-a",
+      "coord": [
+        10,
+        2
+      ],
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "branches": [
+        {
+          "guardLabel": "Needs correction",
+          "labyrinthDir": "left",
+          "nextStepId": "alertMissingFields"
+        },
+        {
+          "guardLabel": "Ready for syntax check",
+          "labyrinthDir": "right",
+          "nextStepId": "normalizeIdentity"
+        }
+      ]
+    },
+    {
+      "id": "alertMissingFields",
+      "kind": "place",
+      "shape": "alert",
+      "expectedToolboxId": "C",
+      "nodeLabel": "Show missing-field checklist",
+      "coord": [
+        9,
+        2
+      ],
+      "labyrinthMove": "left",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "endMissingFields"
+    },
+    {
+      "id": "endMissingFields",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "End // Incomplete form rejected",
+      "coord": [
+        8,
+        2
+      ],
+      "endingId": "missing-fields",
+      "routeKind": "easy",
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step."
+    },
+    {
+      "id": "normalizeIdentity",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Normalize email and username",
+      "coord": [
+        11,
+        2
+      ],
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "gateBSyntax"
+    },
+    {
+      "id": "gateBSyntax",
+      "kind": "decision",
+      "shape": "decision",
+      "nodeLabel": "Gate B // Email OK?",
+      "gateId": "gate-b",
+      "coord": [
+        12,
+        2
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "branches": [
+        {
+          "guardLabel": "Malformed email",
+          "labyrinthDir": "up",
+          "nextStepId": "alertInvalidEmail"
+        },
+        {
+          "guardLabel": "Valid email",
+          "labyrinthDir": "down",
+          "nextStepId": "lookupAccount"
+        }
+      ]
+    },
+    {
+      "id": "alertInvalidEmail",
+      "kind": "place",
+      "shape": "alert",
+      "expectedToolboxId": "C",
+      "nodeLabel": "Reject malformed email",
+      "coord": [
+        12,
+        1
+      ],
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "endInvalidEmail"
+    },
+    {
+      "id": "endInvalidEmail",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "End // Invalid email rejected",
+      "coord": [
+        13,
+        1
+      ],
+      "endingId": "invalid-email",
+      "routeKind": "failure",
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step."
+    },
+    {
+      "id": "lookupAccount",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Look up account by email",
+      "coord": [
+        12,
+        3
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "gateCDirectory"
+    },
+    {
+      "id": "gateCDirectory",
+      "kind": "decision",
+      "shape": "decision",
+      "nodeLabel": "Gate C // Already signed up?",
+      "gateId": "gate-c",
+      "coord": [
+        12,
+        4
+      ],
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "branches": [
+        {
+          "guardLabel": "Duplicate found",
+          "labyrinthDir": "left",
+          "nextStepId": "pivotToGateD"
+        },
+        {
+          "guardLabel": "No duplicate",
+          "labyrinthDir": "right",
+          "nextStepId": "scorePassword"
+        }
+      ]
+    },
+    {
+      "id": "pivotToGateD",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Inspect duplicate account state",
+      "coord": [
+        11,
+        4
+      ],
+      "labyrinthMove": "left",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "gateDDuplicateState"
+    },
+    {
+      "id": "gateDDuplicateState",
+      "kind": "decision",
+      "shape": "decision",
+      "nodeLabel": "Gate D // Existing account already verified?",
+      "gateId": "gate-d",
+      "coord": [
+        10,
+        4
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "branches": [
+        {
+          "guardLabel": "Verified duplicate",
+          "labyrinthDir": "up",
+          "nextStepId": "alertUseLogin"
+        },
+        {
+          "guardLabel": "Only unverified account exists",
+          "labyrinthDir": "down",
+          "nextStepId": "offerResend"
+        }
+      ]
+    },
+    {
+      "id": "alertUseLogin",
+      "kind": "place",
+      "shape": "alert",
+      "expectedToolboxId": "C",
+      "nodeLabel": "Tell user to sign in instead",
+      "coord": [
+        10,
+        3
+      ],
+      "labyrinthMove": "left",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "endUseLogin"
+    },
+    {
+      "id": "endUseLogin",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "End // Redirect to login",
+      "coord": [
+        9,
+        3
+      ],
+      "endingId": "use-login",
+      "routeKind": "failure",
+      "labyrinthMove": "left",
+      "hint": "Choose the simple activity-diagram piece for this step."
+    },
+    {
+      "id": "offerResend",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Offer verification resend",
+      "coord": [
+        10,
+        5
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "gateERecovery"
+    },
+    {
+      "id": "gateERecovery",
+      "kind": "decision",
+      "shape": "decision",
+      "nodeLabel": "Gate E // User accepts recovery resend?",
+      "gateId": "gate-e",
+      "coord": [
+        10,
+        6
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "branches": [
+        {
+          "guardLabel": "Exit for now",
+          "labyrinthDir": "left",
+          "nextStepId": "alertExitUnverified"
+        },
+        {
+          "guardLabel": "Resend verification",
+          "labyrinthDir": "down",
+          "nextStepId": "queueResend"
+        }
+      ]
+    },
+    {
+      "id": "alertExitUnverified",
+      "kind": "place",
+      "shape": "alert",
+      "expectedToolboxId": "C",
+      "nodeLabel": "Pause registration and save draft",
+      "coord": [
+        9,
+        6
+      ],
+      "labyrinthMove": "left",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "endExitUnverified"
+    },
+    {
+      "id": "endExitUnverified",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "End // Unverified recovery paused",
+      "coord": [
+        8,
+        6
+      ],
+      "endingId": "exit-unverified",
+      "routeKind": "recovery",
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step."
+    },
+    {
+      "id": "queueResend",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Queue replacement verification email",
+      "coord": [
+        10,
+        7
+      ],
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "gateFDelivery"
+    },
+    {
+      "id": "gateFDelivery",
+      "kind": "decision",
+      "shape": "decision",
+      "nodeLabel": "Gate F // Recovery email reaches inbox?",
+      "gateId": "gate-f",
+      "coord": [
+        11,
+        7
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "branches": [
+        {
+          "guardLabel": "Mailbox bounced",
+          "labyrinthDir": "right",
+          "nextStepId": "alertBounce"
+        },
+        {
+          "guardLabel": "Delivery succeeded",
+          "labyrinthDir": "down",
+          "nextStepId": "markPendingAfterResend"
+        }
+      ]
+    },
+    {
+      "id": "alertBounce",
+      "kind": "place",
+      "shape": "alert",
+      "expectedToolboxId": "C",
+      "nodeLabel": "Flag bounce and request another email",
+      "coord": [
+        12,
+        7
+      ],
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "endBounce"
+    },
+    {
+      "id": "endBounce",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "End // Recovery email bounced",
+      "coord": [
+        13,
+        7
+      ],
+      "endingId": "bounce-recovery-email",
+      "routeKind": "failure",
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step."
+    },
+    {
+      "id": "markPendingAfterResend",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Keep account pending verification",
+      "coord": [
+        11,
+        8
+      ],
+      "labyrinthMove": "left",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "endPendingAfterResend"
+    },
+    {
+      "id": "endPendingAfterResend",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "End // Waiting on resend verification",
+      "coord": [
+        10,
+        8
+      ],
+      "endingId": "pending-after-resend",
+      "routeKind": "recovery",
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step."
+    },
+    {
+      "id": "scorePassword",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Score password strength",
+      "coord": [
+        13,
+        4
+      ],
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "gateGStrength"
+    },
+    {
+      "id": "gateGStrength",
+      "kind": "decision",
+      "shape": "decision",
+      "nodeLabel": "Gate G // Password strong?",
+      "gateId": "gate-g",
+      "coord": [
+        14,
+        4
+      ],
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "branches": [
+        {
+          "guardLabel": "Weak password",
+          "labyrinthDir": "down",
+          "nextStepId": "showPasswordRules"
+        },
+        {
+          "guardLabel": "Strong password",
+          "labyrinthDir": "right",
+          "nextStepId": "createAccount"
+        }
+      ]
+    },
+    {
+      "id": "showPasswordRules",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Show password policy",
+      "coord": [
+        14,
+        5
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "gateHRetry"
+    },
+    {
+      "id": "gateHRetry",
+      "kind": "decision",
+      "shape": "decision",
+      "nodeLabel": "Gate H // User retries after guidance?",
+      "gateId": "gate-h",
+      "coord": [
+        14,
+        6
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "branches": [
+        {
+          "guardLabel": "User quits",
+          "labyrinthDir": "left",
+          "nextStepId": "alertWeakQuit"
+        },
+        {
+          "guardLabel": "User retries",
+          "labyrinthDir": "down",
+          "nextStepId": "retryCreateAccount"
+        }
+      ]
+    },
+    {
+      "id": "alertWeakQuit",
+      "kind": "place",
+      "shape": "alert",
+      "expectedToolboxId": "C",
+      "nodeLabel": "Cancel registration after warning",
+      "coord": [
+        13,
+        6
+      ],
+      "labyrinthMove": "left",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "endWeakQuit"
+    },
+    {
+      "id": "endWeakQuit",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "End // Weak password abandoned",
+      "coord": [
+        12,
+        6
+      ],
+      "endingId": "weak-password-quit",
+      "routeKind": "failure",
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step."
+    },
+    {
+      "id": "retryCreateAccount",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Create account after stronger password",
+      "coord": [
+        14,
+        7
+      ],
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "retrySendVerification"
+    },
+    {
+      "id": "retrySendVerification",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Send retry verification email",
+      "coord": [
+        15,
+        7
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "gateKRetryVerification"
+    },
+    {
+      "id": "gateKRetryVerification",
+      "kind": "decision",
+      "shape": "decision",
+      "nodeLabel": "Gate K // User opens the retry verification email?",
+      "gateId": "gate-k",
+      "coord": [
+        15,
+        8
+      ],
+      "labyrinthMove": "left",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "branches": [
+        {
+          "guardLabel": "Still pending",
+          "labyrinthDir": "right",
+          "nextStepId": "alertRetryPending"
+        },
+        {
+          "guardLabel": "Verified after retry",
+          "labyrinthDir": "left",
+          "nextStepId": "activateAfterRetry"
+        }
+      ]
+    },
+    {
+      "id": "alertRetryPending",
+      "kind": "place",
+      "shape": "alert",
+      "expectedToolboxId": "C",
+      "nodeLabel": "Leave retry account pending",
+      "coord": [
+        16,
+        8
+      ],
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "endRetryPending"
+    },
+    {
+      "id": "endRetryPending",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "End // Retry account still pending",
+      "coord": [
+        17,
+        8
+      ],
+      "endingId": "pending-after-password-retry",
+      "routeKind": "recovery",
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step."
+    },
+    {
+      "id": "activateAfterRetry",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Activate account after retry",
+      "coord": [
+        14,
+        8
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "endRetryVerified"
+    },
+    {
+      "id": "endRetryVerified",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "End // Verified after password retry",
+      "coord": [
+        14,
+        9
+      ],
+      "endingId": "verified-after-password-retry",
+      "routeKind": "recovery",
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step."
+    },
+    {
+      "id": "createAccount",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Create new account record",
+      "coord": [
+        15,
+        4
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "sendVerification"
+    },
+    {
+      "id": "sendVerification",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Send first verification email",
+      "coord": [
+        15,
+        5
+      ],
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "gateIFirstVerification"
+    },
+    {
+      "id": "gateIFirstVerification",
+      "kind": "decision",
+      "shape": "decision",
+      "nodeLabel": "Gate I // User opens the first verification email?",
+      "gateId": "gate-i",
+      "coord": [
+        16,
+        5
+      ],
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "branches": [
+        {
+          "guardLabel": "Still pending",
+          "labyrinthDir": "down",
+          "nextStepId": "alertPendingVerification"
+        },
+        {
+          "guardLabel": "Verified promptly",
+          "labyrinthDir": "right",
+          "nextStepId": "activateAccount"
+        }
+      ]
+    },
+    {
+      "id": "alertPendingVerification",
+      "kind": "place",
+      "shape": "alert",
+      "expectedToolboxId": "C",
+      "nodeLabel": "Leave account pending verification",
+      "coord": [
+        16,
+        6
+      ],
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "endPendingVerification"
+    },
+    {
+      "id": "endPendingVerification",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "End // Waiting on first verification",
+      "coord": [
+        17,
+        6
+      ],
+      "endingId": "pending-first-verification",
+      "routeKind": "pending",
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step."
+    },
+    {
+      "id": "activateAccount",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Verify account",
+      "coord": [
+        17,
+        5
+      ],
+      "labyrinthMove": "right",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "gateJBonus"
+    },
+    {
+      "id": "gateJBonus",
+      "kind": "decision",
+      "shape": "decision",
+      "nodeLabel": "Gate J // Complete the optional welcome profile?",
+      "gateId": "gate-j",
+      "coord": [
+        18,
+        5
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "branches": [
+        {
+          "guardLabel": "Skip extras",
+          "labyrinthDir": "down",
+          "nextStepId": "unlockVerifiedAccount"
+        },
+        {
+          "guardLabel": "Complete profile bonus",
+          "labyrinthDir": "right",
+          "nextStepId": "seedWelcomeProfile"
+        }
+      ]
+    },
+    {
+      "id": "unlockVerifiedAccount",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Unlock verified account access",
+      "coord": [
+        18,
+        6
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "endVerifiedAccount"
+    },
+    {
+      "id": "endVerifiedAccount",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "End // Verified account activated",
+      "coord": [
+        18,
+        7
+      ],
+      "endingId": "verified-account",
+      "routeKind": "best",
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step."
+    },
+    {
+      "id": "seedWelcomeProfile",
+      "kind": "place",
+      "shape": "action",
+      "expectedToolboxId": "A",
+      "nodeLabel": "Create welcome profile and starter settings",
+      "coord": [
+        19,
+        5
+      ],
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step.",
+      "nextStepId": "endVerifiedBonus"
+    },
+    {
+      "id": "endVerifiedBonus",
+      "kind": "place",
+      "shape": "end",
+      "expectedToolboxId": "_auto_end",
+      "nodeLabel": "End // Verified account plus bonus onboarding",
+      "coord": [
+        19,
+        6
+      ],
+      "endingId": "verified-bonus",
+      "routeKind": "bonus",
+      "labyrinthMove": "down",
+      "hint": "Choose the simple activity-diagram piece for this step."
+    }
+  ]
+}
