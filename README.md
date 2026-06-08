@@ -25,7 +25,8 @@ CLERK_SECRET_KEY="sk_test_..."
 | Command | Description |
 | --- | --- |
 | `npm run dev` | Next.js dev server |
-| `npm run build` | Production `next build` |
+| `npm run build` | Production build — compiles the OpenNext Cloudflare Worker (`.open-next/`) |
+| `npm run build:next` | Plain `next build` (framework build only, no Worker bundle) |
 | `npm run lint` | ESLint |
 | `npm run verify:levels:v2` | Validate the JSON level files |
 | `npm run preview` | Build + run the Cloudflare Worker locally (workerd) |
@@ -49,8 +50,18 @@ Deploy from your machine:
 npm run deploy
 ```
 
-Or connect the repo to **Cloudflare → Workers & Pages → Workers Builds** with
-the Next.js (OpenNext) preset.
+Or connect the repo to **Cloudflare → Workers & Pages → Workers Builds**. The
+build command **must** produce the OpenNext output, or the deploy fails:
+
+- **Build command:** `npm run build` (i.e. `npx opennextjs-cloudflare build`)
+- **Deploy command:** `npx wrangler deploy`
+
+Do **not** leave the build command as a plain `next build` / `npm run build:next`.
+`wrangler deploy` delegates to `opennextjs-cloudflare deploy`, which needs the
+`.open-next/` bundle and its compiled config. A plain `next build` never creates
+them, so the deploy aborts with **"Could not find compiled Open Next config, did
+you run the build command?"** — and the last good Worker keeps serving (e.g. a
+stale `500`). This was the deploy failure fixed in this repo.
 
 ### Runtime model — important constraints
 

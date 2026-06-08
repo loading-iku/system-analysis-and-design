@@ -23,7 +23,9 @@
 - Pages and route handlers MUST NOT declare `export const runtime = "edge"`. OpenNext does not support edge routes; they crash the Worker with a bare `500 Internal Server Error`. This was the cause of the production 500 — all 7 server routes had been marked edge.
 - The auth gate MUST stay named `src/middleware.ts` (Edge Middleware). Next 16 warns to rename it to `proxy.ts`, but the `proxy` convention runs on Node.js, which OpenNext rejects ("Node.js middleware is not currently supported"). Do not rename it.
 - Clerk env vars: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is inlined at BUILD time (set it as a Workers Build variable, not only a runtime var); `CLERK_SECRET_KEY` is a runtime secret (`wrangler secret put`). See README.md.
-- The deprecated Cloudflare **Pages** path (`@cloudflare/next-on-pages`, `scripts/build.mjs`) has been removed; `npm run build` is now plain `next build`.
+- The deprecated Cloudflare **Pages** path (`@cloudflare/next-on-pages`, `scripts/build.mjs`) has been removed.
+- `npm run build` runs `opennextjs-cloudflare build` (emits the `.open-next/` Worker bundle + compiled config). Plain `next build` is still available as `npm run build:next` for framework-only checks.
+- The Cloudflare **Workers Builds** pipeline MUST run a build command that emits the OpenNext output. Set **Build command** = `npm run build` (i.e. `npx opennextjs-cloudflare build`) and **Deploy command** = `npx wrangler deploy`. If the build command is a plain `next build`, `wrangler deploy` (which delegates to `opennextjs-cloudflare deploy`) crashes with "Could not find compiled Open Next config, did you run the build command?" and the stale Worker keeps serving the old `500`. This was the most recent deploy failure.
 
 ## Level Content
 - `place-order`: checkout labyrinth with optional/best-route learning around 3D Secure. Current verifier reports 10 gates, 10 endings, 23 reachable routes, 1 challenge, and 1 completing ending.
