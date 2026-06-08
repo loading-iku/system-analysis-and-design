@@ -11,6 +11,7 @@ import {
 } from "@/lib/progressModel";
 
 const DUPLICATE_WINDOW_MS = 10_000;
+export const runtime = "edge";
 
 type StoredProgressMetadata = {
   profile: ReturnType<typeof emptyProfile>;

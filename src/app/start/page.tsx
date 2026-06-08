@@ -25,6 +25,7 @@ const ASCII_ROWS = [
 ];
 
 export const dynamic = "force-dynamic";
+export const runtime = "edge";
 
 export default async function StartPage() {
   const access = await getCurrentStudentAccess();

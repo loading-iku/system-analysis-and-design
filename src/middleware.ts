@@ -1,5 +1,8 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
+// Cloudflare Pages still requires Edge middleware, so we intentionally keep the
+// deprecated middleware file convention instead of migrating this to proxy.ts.
+
 // Routes that require an authenticated session. Everything else (home, /login,
 // /signup, /signup/verify) stays public so users can actually sign in.
 const isProtectedRoute = createRouteMatcher(["/start(.*)", "/levels(.*)"]);

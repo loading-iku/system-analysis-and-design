@@ -8,6 +8,8 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
+export const runtime = "edge";
+
 export default async function LevelPage({ params }: Props) {
   const access = await getCurrentStudentAccess();
   if (access.kind !== "allowed") {
