@@ -50,22 +50,15 @@
       calc(-1 * var(--surface-offset-y, 0px));
   --game-playfield-background-repeat: no-repeat, no-repeat, repeat;
 
-  --game-panel-vignette: radial-gradient(
-    circle at center,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(255, 255, 255, 0.08) 28%,
-    rgba(0, 0, 0, 0.08) 72%,
-    rgba(0, 0, 0, 0.28) 100%
+  /* Panels/chrome use a flat gray surface; only the in-game playfield keeps
+     the brick texture (see --game-playfield-* and LabyrinthPanel). */
+  --game-panel-background-image: linear-gradient(
+    var(--color-panel),
+    var(--color-panel)
   );
-  --game-panel-scrim: linear-gradient(
-    rgba(244, 238, 230, 0.78),
-    rgba(244, 238, 230, 0.78)
-  );
-  --game-panel-background-image: var(--game-panel-vignette),
-    var(--game-panel-scrim), var(--game-brick-image);
-  --game-panel-background-size: 100% 100%, 100% 100%, 176px 176px;
-  --game-panel-background-position: center, 0 0, 0 0;
-  --game-panel-background-repeat: no-repeat, no-repeat, repeat;
+  --game-panel-background-size: 100% 100%;
+  --game-panel-background-position: 0 0;
+  --game-panel-background-repeat: no-repeat;
 }
 
 *,
