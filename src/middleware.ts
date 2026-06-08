@@ -1,7 +1,14 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// Cloudflare Pages still requires Edge middleware, so we intentionally keep the
-// deprecated middleware file convention instead of migrating this to proxy.ts.
+// Clerk auth gate, implemented as Next.js Edge Middleware.
+//
+// NOTE: Next.js 16 deprecates the `middleware` filename in favour of `proxy`,
+// and `next build` prints a warning about it. We deliberately keep
+// `middleware.ts`: @opennextjs/cloudflare supports Edge Middleware (this file)
+// but does NOT support the Node.js `proxy` runtime — renaming to `proxy.ts`
+// fails the OpenNext build with "Node.js middleware is not currently
+// supported." Keep this as middleware.ts until OpenNext supports proxy.
+// (Pages/route handlers are the opposite: they must NOT use `runtime = "edge"`.)
 
 // Routes that require an authenticated session. Everything else (home, /login,
 // /signup, /signup/verify) stays public so users can actually sign in.

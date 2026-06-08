@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "system-analysis-and-design",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-12-01",
+  // `nodejs_compat` is REQUIRED by @opennextjs/cloudflare — the Next.js server
+  // runs in the Workers Node.js-compatible runtime, not the Edge runtime.
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".open-next/assets"
+  },
+  "observability": {
+    "enabled": true
+  }
+  // Runtime variables/secrets (Clerk keys) are configured in the Cloudflare
+  // dashboard or via `wrangler secret put` — they are intentionally NOT
+  // committed here. See .dev.vars.example and README.md.
+}
