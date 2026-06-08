@@ -25,7 +25,8 @@ CLERK_SECRET_KEY="sk_test_..."
 | Command | Description |
 | --- | --- |
 | `npm run dev` | Next.js dev server |
-| `npm run build` | Production `next build` |
+| `npm run build` | OpenNext build — runs `next build` **and** emits the deployable Worker (`.open-next/worker.js`) |
+| `npm run build:next` | Plain `next build` (no Worker bundle) |
 | `npm run lint` | ESLint |
 | `npm run verify:levels:v2` | Validate the JSON level files |
 | `npm run preview` | Build + run the Cloudflare Worker locally (workerd) |
@@ -49,8 +50,15 @@ Deploy from your machine:
 npm run deploy
 ```
 
-Or connect the repo to **Cloudflare → Workers & Pages → Workers Builds** with
-the Next.js (OpenNext) preset.
+Or connect the repo to **Cloudflare → Workers & Pages → Workers Builds**. Set:
+
+- **Build command:** `npm run build` (it runs the OpenNext build and emits
+  `.open-next/worker.js`).
+- **Deploy command:** `npx wrangler deploy` (or `npx wrangler versions upload`).
+
+> ⚠️ If the build command only runs `next build`, the Worker bundle is never
+> generated and the deploy fails with
+> `The entry-point file at ".open-next/worker.js" was not found`.
 
 ### Runtime model — important constraints
 

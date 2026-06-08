@@ -23,7 +23,7 @@
 - Pages and route handlers MUST NOT declare `export const runtime = "edge"`. OpenNext does not support edge routes; they crash the Worker with a bare `500 Internal Server Error`. This was the cause of the production 500 — all 7 server routes had been marked edge.
 - The auth gate MUST stay named `src/middleware.ts` (Edge Middleware). Next 16 warns to rename it to `proxy.ts`, but the `proxy` convention runs on Node.js, which OpenNext rejects ("Node.js middleware is not currently supported"). Do not rename it.
 - Clerk env vars: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is inlined at BUILD time (set it as a Workers Build variable, not only a runtime var); `CLERK_SECRET_KEY` is a runtime secret (`wrangler secret put`). See README.md.
-- The deprecated Cloudflare **Pages** path (`@cloudflare/next-on-pages`, `scripts/build.mjs`) has been removed; `npm run build` is now plain `next build`.
+- `npm run build` runs the OpenNext build (`opennextjs-cloudflare build`) — it runs `next build` AND emits the deployable Worker at `.open-next/worker.js`. `npm run build:next` is the plain Next build. The Cloudflare Workers **build command must be `npm run build`** (or `npx opennextjs-cloudflare build`) so the Worker artifact exists before the deploy command (`wrangler deploy` or `wrangler versions upload`) runs — otherwise the deploy fails with `The entry-point file at ".open-next/worker.js" was not found`. The deprecated Pages path (`@cloudflare/next-on-pages`, `scripts/build.mjs`) was removed.
 
 ## Level Content
 - `place-order`: checkout labyrinth with optional/best-route learning around 3D Secure. Current verifier reports 10 gates, 10 endings, 23 reachable routes, 1 challenge, and 1 completing ending.
