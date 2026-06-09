@@ -8,41 +8,101 @@ import { resetProgressProfile } from "@/lib/progress";
 const RESET_CONFIRMATION_MESSAGE =
   "Reset all progress? This will clear your endings, unlocked levels, XP, and coins.";
 
-type ResetState = "idle" | "working" | "done" | "error";
+type ActionState = "idle" | "working" | "done" | "error";
 
-const STATUS_TEXT: Record<ResetState, string> = {
+const RESET_STATUS_TEXT: Record<ActionState, string> = {
   idle: "Status: ready",
   working: "Status: resetting progress...",
   done: "Status: progress reset. Open Levels to start over.",
   error: "Status: reset failed. Try again.",
 };
 
+const EXPORT_STATUS_TEXT: Record<ActionState, string> = {
+  idle: "Status: ready",
+  working: "Status: exporting logs...",
+  done: "Status: export downloaded.",
+  error: "Status: export failed. Try again.",
+};
+
 export function StartSettingsPanel() {
-  const [state, setState] = useState<ResetState>("idle");
+  const [resetState, setResetState] = useState<ActionState>("idle");
+  const [exportState, setExportState] = useState<ActionState>("idle");
 
   async function handleReset() {
-    if (state === "working") return;
+    if (resetState === "working") return;
     if (!window.confirm(RESET_CONFIRMATION_MESSAGE)) return;
 
-    setState("working");
+    setResetState("working");
 
     try {
       await resetProgressProfile();
-      setState("done");
+      setResetState("done");
     } catch {
-      setState("error");
+      setResetState("error");
+    }
+  }
+
+  async function handleExport() {
+    if (exportState === "working") return;
+
+    setExportState("working");
+
+    try {
+      const response = await fetch("/api/export/logs", { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error("Unable to export logs.");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = readDownloadFilename(response.headers);
+      document.body.append(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+      }, 0);
+      setExportState("done");
+    } catch {
+      setExportState("error");
     }
   }
 
   return (
     <CliShell>
       <span>{"// settings"}</span>
+      <span>## Reset progress</span>
       <span>Reset your saved endings, unlocked levels, XP, and coins.</span>
       <span>This cannot be undone.</span>
-      <CliButtonLink onClick={() => void handleReset()} disabled={state === "working"}>
-        {state === "working" ? "> Resetting progress..." : "> Reset progress"}
+      <CliButtonLink
+        onClick={() => void handleReset()}
+        disabled={resetState === "working"}
+      >
+        {resetState === "working" ? "> Resetting progress..." : "> Reset progress"}
       </CliButtonLink>
-      <span>{STATUS_TEXT[state]}</span>
+      <span>{RESET_STATUS_TEXT[resetState]}</span>
+      <CliShell.Blank />
+      <span>## Export logs as JSON</span>
+      <span>Download all student leaderboard rows and level progressions.</span>
+      <span>Only available while signed in with your IKU student account.</span>
+      <CliButtonLink
+        onClick={() => void handleExport()}
+        disabled={exportState === "working"}
+      >
+        {exportState === "working"
+          ? "> Exporting logs..."
+          : "> Export logs as JSON"}
+      </CliButtonLink>
+      <span>{EXPORT_STATUS_TEXT[exportState]}</span>
     </CliShell>
   );
+}
+
+function readDownloadFilename(headers: Headers): string {
+  const match = headers.get("Content-Disposition")?.match(/filename="([^"]+)"/);
+  if (match?.[1]) return match[1];
+
+  return `logic-path-logs-${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
 }
