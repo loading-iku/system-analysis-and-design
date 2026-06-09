@@ -9,6 +9,7 @@ import { CliPrompt } from "@/components/cli/CliPrompt";
 import { CliShell } from "@/components/cli/CliShell";
 import { clerkErrorMessage } from "@/lib/auth/clerkError";
 import { currentAuthRedirect } from "@/lib/auth/redirect";
+import { useRedirectIfSignedIn } from "@/lib/auth/useRedirectIfSignedIn";
 import {
   STUDENT_EMAIL_ERROR,
   isAllowedStudentEmail,
@@ -17,6 +18,7 @@ import {
 
 export default function SignUpPage() {
   const router = useRouter();
+  const { isSignedIn } = useRedirectIfSignedIn();
   const { isLoaded, signUp } = useSignUp();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -64,6 +66,16 @@ export default function SignUpPage() {
       setSubmitting(false);
     }
   };
+
+  if (isSignedIn) {
+    return (
+      <CliPage>
+        <CliShell>
+          <span>Redirecting...</span>
+        </CliShell>
+      </CliPage>
+    );
+  }
 
   return (
     <CliPage>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSignIn } from "@clerk/react/legacy";
 import { CliButtonLink } from "@/components/cli/CliButtonLink";
@@ -8,7 +7,8 @@ import { CliPage } from "@/components/cli/CliPage";
 import { CliPrompt } from "@/components/cli/CliPrompt";
 import { CliShell } from "@/components/cli/CliShell";
 import { clerkErrorMessage } from "@/lib/auth/clerkError";
-import { currentAuthRedirect } from "@/lib/auth/redirect";
+import { redirectToAuthTarget } from "@/lib/auth/redirect";
+import { useRedirectIfSignedIn } from "@/lib/auth/useRedirectIfSignedIn";
 import {
   STUDENT_EMAIL_ERROR,
   isAllowedStudentEmail,
@@ -16,7 +16,7 @@ import {
 } from "@/lib/auth/student";
 
 export default function LoginPage() {
-  const router = useRouter();
+  const { isSignedIn } = useRedirectIfSignedIn();
   const { isLoaded, signIn, setActive } = useSignIn();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,7 +42,7 @@ export default function LoginPage() {
 
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push(currentAuthRedirect("/start"));
+        redirectToAuthTarget();
       } else {
         setError("Password sign-in could not be completed.");
       }
@@ -52,6 +52,16 @@ export default function LoginPage() {
       setSubmitting(false);
     }
   };
+
+  if (isSignedIn) {
+    return (
+      <CliPage>
+        <CliShell>
+          <span>Redirecting...</span>
+        </CliShell>
+      </CliPage>
+    );
+  }
 
   return (
     <CliPage>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
 import type { ReactNode } from "react";
 import { useSignUp } from "@clerk/react/legacy";
@@ -10,7 +10,8 @@ import { CliPage } from "@/components/cli/CliPage";
 import { CliPrompt } from "@/components/cli/CliPrompt";
 import { CliShell } from "@/components/cli/CliShell";
 import { clerkErrorMessage } from "@/lib/auth/clerkError";
-import { resolveAuthRedirect } from "@/lib/auth/redirect";
+import { redirectToAuthTarget } from "@/lib/auth/redirect";
+import { useRedirectIfSignedIn } from "@/lib/auth/useRedirectIfSignedIn";
 
 function maskEmail(raw: string | null | undefined): string {
   if (!raw) return "s****@gmail.com";
@@ -23,8 +24,8 @@ function maskEmail(raw: string | null | undefined): string {
 }
 
 function VerifyContent() {
-  const router = useRouter();
   const search = useSearchParams();
+  const { isSignedIn } = useRedirectIfSignedIn();
   const { isLoaded, signUp, setActive } = useSignUp();
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +46,7 @@ function VerifyContent() {
       const result = await signUp.attemptEmailAddressVerification({ code });
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId });
-        router.push(resolveAuthRedirect(search.get("redirect_url")));
+        redirectToAuthTarget();
       } else {
         setError("Invalid or incomplete verification. Check the code.");
       }
@@ -67,6 +68,14 @@ function VerifyContent() {
       setError(clerkErrorMessage(err));
     }
   };
+
+  if (isSignedIn) {
+    return (
+      <CliShell>
+        <span>Redirecting...</span>
+      </CliShell>
+    );
+  }
 
   if (!hasPendingAttempt) {
     return (
