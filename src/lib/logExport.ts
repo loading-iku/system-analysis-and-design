@@ -1,18 +1,29 @@
-import type { ProgressProfile } from "@/lib/level/types";
-import type { LeaderboardEntry } from "./leaderboard";
+export const GPAF_LOG_FORMAT = "1.0" as const;
+export const DEFAULT_GPAF_GAME_ID = "GM-LOGICPATHV2";
 
-export const LOG_EXPORT_VERSION = 1 as const;
+export type GpafLogEventType =
+  | "session_start"
+  | "score_update"
+  | "level_complete"
+  | "level_progress"
+  | "session_end";
 
-export type StudentLogExportEntry = {
-  fullName: string;
-  studentNumber: string;
-  progress: ProgressProfile;
+export type GpafLogEvent = {
+  ts: string;
+  playerPseudoId: string;
+  sessionId: string;
+  gameId: string;
+  eventType: GpafLogEventType;
+  payload: Record<string, unknown>;
 };
 
-export type StudentLogExportPayload = {
-  version: typeof LOG_EXPORT_VERSION;
+export type GpafLogExportFile = {
+  format: typeof GPAF_LOG_FORMAT;
   generatedAt: string;
-  studentCount: number;
-  leaderboard: LeaderboardEntry[];
-  students: StudentLogExportEntry[];
+  eventCount: number;
+  content: string;
 };
+
+export function serializeGpafLogEvents(events: GpafLogEvent[]): string {
+  return events.map((event) => JSON.stringify(event)).join("\n");
+}

@@ -84,8 +84,8 @@ export function StartSettingsPanel() {
       </CliButtonLink>
       <span>{RESET_STATUS_TEXT[resetState]}</span>
       <CliShell.Blank />
-      <span>## Export logs as JSON</span>
-      <span>Download all student leaderboard rows and level progressions.</span>
+      <span>## Export logs as JSONL</span>
+      <span>Download GPAF-style pseudonymous leaderboard and progress events.</span>
       <span>Only available while signed in with your IKU student account.</span>
       <CliButtonLink
         onClick={() => void handleExport()}
@@ -93,7 +93,7 @@ export function StartSettingsPanel() {
       >
         {exportState === "working"
           ? "> Exporting logs..."
-          : "> Export logs as JSON"}
+          : "> Export logs as JSONL"}
       </CliButtonLink>
       <span>{EXPORT_STATUS_TEXT[exportState]}</span>
     </CliShell>
@@ -104,5 +104,5 @@ function readDownloadFilename(headers: Headers): string {
   const match = headers.get("Content-Disposition")?.match(/filename="([^"]+)"/);
   if (match?.[1]) return match[1];
 
-  return `logic-path-logs-${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
+  return `logic-path-logs-${new Date().toISOString().replace(/[:.]/g, "-")}.jsonl`;
 }

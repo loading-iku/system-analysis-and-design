@@ -59,6 +59,17 @@ export function deriveEndingDoorBarriers(
   const barriers: LabyrinthBarrier[] = [];
   const errors: string[] = [];
 
+  // Carved cells for every link, so we can tell which cells are shared with
+  // other corridors (a lock must never sit on a cell another route needs).
+  const linkCells = links.map((link) => ({
+    link,
+    cells: linkPathCells(
+      roomById.get(link.fromRoomId),
+      roomById.get(link.toRoomId),
+      link.points,
+    ),
+  }));
+
   rooms
     .filter((room) => room.endingId)
     .forEach((room) => {
@@ -80,16 +91,18 @@ export function deriveEndingDoorBarriers(
         return;
       }
 
-      const path = [
-        roomCenter(fromRoom),
-        ...(incomingLink.points ?? []),
-        roomCenter(room),
-      ];
-      const sourcePoint = path[0];
-      const nextPoint = findNextDistinctPoint(path, sourcePoint);
-      const doorwayCell = deriveDepartureCell(fromRoom, sourcePoint, nextPoint);
+      const path = linkPathCells(fromRoom, room, incomingLink.points);
 
-      if (!doorwayCell) {
+      // Cells used by any OTHER link — locking one of these would block an
+      // unrelated flow, so they are off limits.
+      const sharedCells = new Set<string>();
+      linkCells.forEach((entry) => {
+        if (entry.link === incomingLink) return;
+        entry.cells.forEach((cell) => sharedCells.add(cellKey(cell.x, cell.y)));
+      });
+
+      const lockCell = pickEntryPathCell(path, room, rooms, sharedCells);
+      if (!lockCell) {
         errors.push(
           `ending "${endingId}" entry-path barrier could not be derived from its incoming room link.`,
         );
@@ -98,7 +111,7 @@ export function deriveEndingDoorBarriers(
 
       barriers.push({
         id: endingDoorBarrierId(endingId),
-        cells: [doorwayCell],
+        cells: [lockCell],
         opensWhenEndingUnlocked: endingId,
       });
     });
@@ -106,51 +119,112 @@ export function deriveEndingDoorBarriers(
   return { barriers, errors };
 }
 
-function deriveDepartureCell(
-  room: LabyrinthRoom,
-  sourcePoint: Coord,
-  nextPoint: Coord | undefined,
+/**
+ * Choose the cell to bar for an ending, scanning its approach corridor from the
+ * source room toward the ending. Prefers the first private corridor cell (the
+ * "first path that leads to the ending"); falls back to a private doorway tile
+ * inside the ending room when it hangs directly off a shared trunk.
+ */
+function pickEntryPathCell(
+  path: Coord[],
+  endingRoom: LabyrinthRoom,
+  rooms: LabyrinthRoom[],
+  sharedCells: Set<string>,
 ): Coord | null {
-  if (!nextPoint) return null;
+  const center = roomCenter(endingRoom);
+  const centerKey = cellKey(center.x, center.y);
 
-  const firstSegmentEnd =
-    sourcePoint.x !== nextPoint.x && sourcePoint.y !== nextPoint.y
-      ? { x: nextPoint.x, y: sourcePoint.y }
-      : nextPoint;
-
-  if (firstSegmentEnd.y === sourcePoint.y) {
-    if (firstSegmentEnd.x > sourcePoint.x) {
-      return { x: room.x + room.width - 1, y: sourcePoint.y };
-    }
-    if (firstSegmentEnd.x < sourcePoint.x) {
-      return { x: room.x, y: sourcePoint.y };
+  // 1. First private corridor cell (outside every room, not shared).
+  for (const cell of path) {
+    if (
+      !isInsideAnyRoom(cell, rooms) &&
+      !sharedCells.has(cellKey(cell.x, cell.y))
+    ) {
+      return cell;
     }
   }
 
-  if (firstSegmentEnd.x === sourcePoint.x) {
-    if (firstSegmentEnd.y > sourcePoint.y) {
-      return { x: sourcePoint.x, y: room.y + room.height - 1 };
+  // 2. First private doorway tile inside the ending room (not shared, not the
+  //    marker tile) — used when the room opens straight off a shared trunk.
+  for (const cell of path) {
+    const key = cellKey(cell.x, cell.y);
+    if (
+      isInsideRoom(cell, endingRoom) &&
+      !sharedCells.has(key) &&
+      key !== centerKey
+    ) {
+      return cell;
     }
-    if (firstSegmentEnd.y < sourcePoint.y) {
-      return { x: sourcePoint.x, y: room.y };
+  }
+
+  // 3. Fallback: first corridor cell even if shared. Only reached for endings
+  //    with no private cell, whose bar is effectively always open.
+  for (const cell of path) {
+    if (!isInsideAnyRoom(cell, rooms)) {
+      return cell;
+    }
+  }
+
+  // 4. Last resort: first non-marker cell on the path.
+  for (const cell of path) {
+    if (cellKey(cell.x, cell.y) !== centerKey) {
+      return cell;
     }
   }
 
   return null;
 }
 
-function findNextDistinctPoint(
-  path: Coord[],
-  sourcePoint: Coord,
-): Coord | undefined {
-  for (let index = 1; index < path.length; index += 1) {
-    const point = path[index];
-    if (point.x !== sourcePoint.x || point.y !== sourcePoint.y) {
-      return point;
+/**
+ * Cells a room link carves, in order from the source room center to the target
+ * room center. Mirrors compileRoomMap's horizontal-then-vertical carve so the
+ * derived cells line up with the real corridor.
+ */
+function linkPathCells(
+  from: LabyrinthRoom | undefined,
+  to: LabyrinthRoom | undefined,
+  points: Coord[] | undefined,
+): Coord[] {
+  if (!from || !to) return [];
+
+  const waypoints = [roomCenter(from), ...(points ?? []), roomCenter(to)];
+  const cells: Coord[] = [];
+  const seen = new Set<string>();
+  const push = (x: number, y: number) => {
+    const key = cellKey(x, y);
+    if (seen.has(key)) return;
+    seen.add(key);
+    cells.push({ x, y });
+  };
+
+  for (let index = 0; index < waypoints.length - 1; index += 1) {
+    let { x, y } = waypoints[index];
+    const target = waypoints[index + 1];
+    push(x, y);
+    while (x !== target.x) {
+      x += Math.sign(target.x - x);
+      push(x, y);
+    }
+    while (y !== target.y) {
+      y += Math.sign(target.y - y);
+      push(x, y);
     }
   }
 
-  return undefined;
+  return cells;
+}
+
+function isInsideRoom(cell: Coord, room: LabyrinthRoom): boolean {
+  return (
+    cell.x >= room.x &&
+    cell.x < room.x + room.width &&
+    cell.y >= room.y &&
+    cell.y < room.y + room.height
+  );
+}
+
+function isInsideAnyRoom(cell: Coord, rooms: LabyrinthRoom[]): boolean {
+  return rooms.some((room) => isInsideRoom(cell, room));
 }
 
 function roomCenter(room: LabyrinthRoom): Coord {

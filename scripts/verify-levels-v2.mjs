@@ -2217,6 +2217,17 @@ function deriveEndingDoorBarrierErrors(ctx) {
   const roomById = new Map(rooms.map((room) => [room.id, room]));
   const errors = [];
 
+  // Carved cells for every link, so we can tell which cells are shared with
+  // other corridors (a lock must never sit on a cell another route needs).
+  const linkCells = links.map((link) => ({
+    link,
+    cells: linkPathCells(
+      roomById.get(link.fromRoomId),
+      roomById.get(link.toRoomId),
+      link.points,
+    ),
+  }));
+
   rooms
     .filter((room) => typeof room.endingId === "string" && room.endingId.length > 0)
     .forEach((room) => {
@@ -2237,14 +2248,30 @@ function deriveEndingDoorBarrierErrors(ctx) {
         return;
       }
 
-      const path = [roomCenter(fromRoom), ...(link.points ?? []), roomCenter(room)];
-      const sourcePoint = path[0];
-      const nextPoint = findNextDistinctPoint(path, sourcePoint);
-      const doorway = deriveDepartureCell(fromRoom, sourcePoint, nextPoint);
+      const path = linkPathCells(fromRoom, room, link.points);
 
-      if (!doorway) {
+      const sharedCells = new Set();
+      linkCells.forEach((entry) => {
+        if (entry.link === link) return;
+        entry.cells.forEach((cell) => sharedCells.add(coordKey(cell)));
+      });
+
+      const lockCell = pickEntryPathCell(path, room, rooms, sharedCells);
+      if (!lockCell) {
         errors.push(
           `Ending room "${room.endingId}" could not derive an entry-path barrier from its incoming room link.`,
+        );
+        return;
+      }
+
+      // A bar for a lockable (not initially unlocked) ending must sit on a
+      // cell no other corridor uses, or closing it would wall off an
+      // unrelated route. Force the ending onto a private approach instead.
+      const ending = ctx.endings.get(room.endingId);
+      const lockable = ending ? !ending.initiallyUnlocked : true;
+      if (lockable && sharedCells.has(coordKey(lockCell))) {
+        errors.push(
+          `Ending room "${room.endingId}" entry-path barrier at ${lockCell.x},${lockCell.y} sits on a shared corridor; give the ending a private approach so the bar does not block another route.`,
         );
       }
     });
@@ -2252,46 +2279,84 @@ function deriveEndingDoorBarrierErrors(ctx) {
   return errors;
 }
 
-function deriveDepartureCell(room, sourcePoint, nextPoint) {
-  if (!nextPoint) {
-    return null;
+/**
+ * Cells a room link carves, in order from the source room center to the target
+ * room center. Mirrors compileRoomRows' horizontal-then-vertical carve and the
+ * runtime derivation in src/lib/level/barriers.ts.
+ */
+function linkPathCells(from, to, points) {
+  if (!from || !to) {
+    return [];
   }
 
-  const firstSegmentEnd =
-    sourcePoint.x !== nextPoint.x && sourcePoint.y !== nextPoint.y
-      ? { x: nextPoint.x, y: sourcePoint.y }
-      : nextPoint;
-
-  if (firstSegmentEnd.y === sourcePoint.y) {
-    if (firstSegmentEnd.x > sourcePoint.x) {
-      return { x: room.x + room.width - 1, y: sourcePoint.y };
+  const waypoints = [roomCenter(from), ...(points ?? []), roomCenter(to)];
+  const cells = [];
+  const seen = new Set();
+  const push = (x, y) => {
+    const key = `${x},${y}`;
+    if (seen.has(key)) {
+      return;
     }
-    if (firstSegmentEnd.x < sourcePoint.x) {
-      return { x: room.x, y: sourcePoint.y };
+    seen.add(key);
+    cells.push({ x, y });
+  };
+
+  for (let index = 0; index < waypoints.length - 1; index += 1) {
+    let { x, y } = waypoints[index];
+    const target = waypoints[index + 1];
+    push(x, y);
+    while (x !== target.x) {
+      x += Math.sign(target.x - x);
+      push(x, y);
+    }
+    while (y !== target.y) {
+      y += Math.sign(target.y - y);
+      push(x, y);
     }
   }
 
-  if (firstSegmentEnd.x === sourcePoint.x) {
-    if (firstSegmentEnd.y > sourcePoint.y) {
-      return { x: sourcePoint.x, y: room.y + room.height - 1 };
-    }
-    if (firstSegmentEnd.y < sourcePoint.y) {
-      return { x: sourcePoint.x, y: room.y };
+  return cells;
+}
+
+function pickEntryPathCell(path, endingRoom, rooms, sharedCells) {
+  const center = roomCenter(endingRoom);
+  const centerKey = coordKey(center);
+
+  for (const cell of path) {
+    if (!isInsideAnyRoom(cell, rooms) && !sharedCells.has(coordKey(cell))) {
+      return cell;
     }
   }
-
+  for (const cell of path) {
+    const key = coordKey(cell);
+    if (isInsideRoom(cell, endingRoom) && !sharedCells.has(key) && key !== centerKey) {
+      return cell;
+    }
+  }
+  for (const cell of path) {
+    if (!isInsideAnyRoom(cell, rooms)) {
+      return cell;
+    }
+  }
+  for (const cell of path) {
+    if (coordKey(cell) !== centerKey) {
+      return cell;
+    }
+  }
   return null;
 }
 
-function findNextDistinctPoint(path, sourcePoint) {
-  for (let index = 1; index < path.length; index += 1) {
-    const point = path[index];
-    if (point.x !== sourcePoint.x || point.y !== sourcePoint.y) {
-      return point;
-    }
-  }
+function isInsideRoom(cell, room) {
+  return (
+    cell.x >= room.x &&
+    cell.x < room.x + room.width &&
+    cell.y >= room.y &&
+    cell.y < room.y + room.height
+  );
+}
 
-  return undefined;
+function isInsideAnyRoom(cell, rooms) {
+  return rooms.some((room) => isInsideRoom(cell, room));
 }
 
 function buildWalkableSet(level, rows) {
