@@ -85,7 +85,8 @@ export function StartSettingsPanel() {
       <span>{RESET_STATUS_TEXT[resetState]}</span>
       <CliShell.Blank />
       <span>## Export logs as JSONL</span>
-      <span>Download GPAF-style pseudonymous leaderboard and progress events.</span>
+      <span>Download GPAF-style leaderboard and progress events.</span>
+      <span>Each log line includes player name, student number, and pseudo ID.</span>
       <span>Only available while signed in with your IKU student account.</span>
       <CliButtonLink
         onClick={() => void handleExport()}

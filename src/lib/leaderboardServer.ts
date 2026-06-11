@@ -140,19 +140,15 @@ function buildStudentGpafEvents(
 
   return [
     {
+      ...toEventIdentity(student, sessionId, gameId),
       ts: sessionStartTs,
-      playerPseudoId: student.playerPseudoId,
-      sessionId,
-      gameId,
       eventType: "session_start",
       payload: {},
     },
     ...levelEvents,
     {
+      ...toEventIdentity(student, sessionId, gameId),
       ts: sessionEndTs,
-      playerPseudoId: student.playerPseudoId,
-      sessionId,
-      gameId,
       eventType: "score_update",
       payload: {
         score: student.progress.totals.xp,
@@ -163,10 +159,8 @@ function buildStudentGpafEvents(
       },
     },
     {
+      ...toEventIdentity(student, sessionId, gameId),
       ts: sessionEndTs,
-      playerPseudoId: student.playerPseudoId,
-      sessionId,
-      gameId,
       eventType: "session_end",
       payload: {
         completed: totalLevelCount > 0 && clearedLevelCount === totalLevelCount,
@@ -191,10 +185,8 @@ function buildLevelEvent(
   const bestRun = toRunPayload(level.bestRun);
 
   return {
+    ...toEventIdentity(student, sessionId, gameId),
     ts: getLevelEventTimestamp(level, fallbackTs),
-    playerPseudoId: student.playerPseudoId,
-    sessionId,
-    gameId,
     eventType,
     payload: {
       level: levelOrder.get(levelId) ?? 0,
@@ -211,6 +203,20 @@ function buildLevelEvent(
       lastRun,
       bestRun,
     },
+  };
+}
+
+function toEventIdentity(
+  student: RankedStudentSnapshot,
+  sessionId: string,
+  gameId: string,
+) {
+  return {
+    playerPseudoId: student.playerPseudoId,
+    playerName: student.fullName,
+    studentNumber: student.studentNumber,
+    sessionId,
+    gameId,
   };
 }
 

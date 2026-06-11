@@ -11,6 +11,8 @@ export type GpafLogEventType =
 export type GpafLogEvent = {
   ts: string;
   playerPseudoId: string;
+  playerName: string;
+  studentNumber: string;
   sessionId: string;
   gameId: string;
   eventType: GpafLogEventType;
